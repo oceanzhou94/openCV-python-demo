@@ -3,8 +3,6 @@
 @File ：geometricTransformation.py
 图像几何变换逻辑处理
 """
-import copy
-
 from PyQt5 import QtCore
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
@@ -152,11 +150,11 @@ class SubWindow(QMainWindow):
         M = cv2.getRotationMatrix2D(((cols - 1) / 2.0, (rows - 1) / 2.0), angle, 1)
         self.cv_dealtImage = cv2.warpAffine(self.cv_srcImage, M, (cols, rows))
 
-        # 缩放后的大小显示在label上面
+        # 旋转后的图片显示在label上面
         height, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]
         self.dst_img = QImage(cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
 
-        # 将图片显示在label_source_img上面
+        # 将图片显示在label_dealt_img上面
         self.ui.label_dealt_img.setPixmap(QPixmap.fromImage(self.dst_img))
 
     # 图像旋转恢复
@@ -185,7 +183,7 @@ class SubWindow(QMainWindow):
         # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，1表示水平翻转
         self.cv_dealtImage = cv2.flip(self.cv_srcImage, 1)  # 水平翻转
 
-        # 缩放后的大小显示在label上面
+        # 将cv读取的图像装换成QImage类型
         height, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]
         self.dst_img = QImage(cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB), width, height,
                               QImage.Format_RGB888)
@@ -198,7 +196,7 @@ class SubWindow(QMainWindow):
         # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，0表示水平翻转
         self.cv_dealtImage = cv2.flip(self.cv_srcImage, 0)  # 垂直翻转
 
-        # 缩放后的大小显示在label上面
+        # 将cv读取的图像装换成QImage类型
         height, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]
         self.dst_img = QImage(cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB), width, height,
                               QImage.Format_RGB888)
@@ -211,7 +209,7 @@ class SubWindow(QMainWindow):
         # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，-1表示同时水平翻转和垂直翻转
         self.cv_dealtImage = cv2.flip(self.cv_srcImage, -1)  # 对角翻转
 
-        # 缩放后的大小显示在label上面
+        # 将cv读取的图像装换成QImage类型
         height, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]
         self.dst_img = QImage(cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB), width, height,
                               QImage.Format_RGB888)

@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import QMainWindow
 
 from userInterface import mainWindowUI
 
-from businessLogic import makeImageMask
 from businessLogic import characterCoding
 from businessLogic import faceDetection
 from businessLogic import geometricTransformation
+from businessLogic import makeImageMask, morphologicalTransformation
 
 
 class MainWindow(QMainWindow):
@@ -17,6 +17,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__(parent=None)
         # 布局初始化
+
         self.ui = mainWindowUI.Ui_MainWindow()
         self.ui.setupUi(MainWindow=self)
 
@@ -25,6 +26,7 @@ class MainWindow(QMainWindow):
         self.makeImageMask = None  # 创建图像掩膜子窗口对象
         self.faceDetection = None  # 人脸识别和检测子窗口对象
         self.geometricTransformation = None  # 图像几何变换子窗口对象
+        self.morphologicalTransformation = None  # 图像形态变换子窗口对象
 
         # 信号与槽定义
         self.signal_and_slot()
@@ -34,6 +36,7 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_1.clicked.connect(self.push_button_1)
         self.ui.pushButton_2.clicked.connect(self.push_button_2)
         self.ui.pushButton_3.clicked.connect(self.push_button_3)
+        self.ui.pushButton_4.clicked.connect(self.push_button_4)
         self.ui.pushButton_12.clicked.connect(self.push_button_12)
 
     # 按钮1-人物图像打码触发事件
@@ -50,6 +53,11 @@ class MainWindow(QMainWindow):
     def push_button_3(self):
         self.geometricTransformation = geometricTransformation.SubWindow()
         self.geometricTransformation.show()
+
+    # 按钮4-图像形态变换触发事件
+    def push_button_4(self):
+        self.morphologicalTransformation = morphologicalTransformation.SubWindow()
+        self.morphologicalTransformation.show()
 
     # 按钮12-人脸识别检测触发事件
     def push_button_12(self):
