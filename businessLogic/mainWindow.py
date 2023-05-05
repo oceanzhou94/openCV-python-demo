@@ -10,6 +10,7 @@ from businessLogic import characterCoding, edgeDetection
 from businessLogic import faceDetection
 from businessLogic import geometricTransformation
 from businessLogic import makeImageMask, morphologicalTransformation
+from businessLogic import contourDetection
 
 
 class MainWindow(QMainWindow):
@@ -28,6 +29,7 @@ class MainWindow(QMainWindow):
         self.geometricTransformation = None  # 图像几何变换子窗口对象
         self.morphologicalTransformation = None  # 图像形态变换子窗口对象
         self.edgeDetection = None  # 图像边缘检测子窗口对象
+        self.contourDetection = None  # 图像轮廓检测子窗口对象
 
         # 信号与槽定义
         self.signal_and_slot()
@@ -40,6 +42,7 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_4.clicked.connect(self.push_button_4)
 
         self.ui.pushButton_6.clicked.connect(self.push_button_6)
+        self.ui.pushButton_7.clicked.connect(self.push_button_7)
 
         self.ui.pushButton_12.clicked.connect(self.push_button_12)
 
@@ -63,10 +66,15 @@ class MainWindow(QMainWindow):
         self.morphologicalTransformation = morphologicalTransformation.SubWindow()
         self.morphologicalTransformation.show()
 
-    # 按钮5-图像边缘检测触发事件
+    # 按钮6-图像边缘检测触发事件
     def push_button_6(self):
         self.edgeDetection = edgeDetection.SubWindow()
         self.edgeDetection.show()
+
+    # 按钮7-图像轮廓检测触发事件
+    def push_button_7(self):
+        self.contourDetection = contourDetection.SubWindow()
+        self.contourDetection.show()
 
     # 按钮12-人脸识别检测触发事件
     def push_button_12(self):
