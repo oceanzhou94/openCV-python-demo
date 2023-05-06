@@ -11,6 +11,7 @@ from businessLogic import faceDetection
 from businessLogic import geometricTransformation
 from businessLogic import makeImageMask, morphologicalTransformation
 from businessLogic import contourDetection
+from businessLogic import histogramEqualization
 
 
 class MainWindow(QMainWindow):
@@ -30,6 +31,7 @@ class MainWindow(QMainWindow):
         self.morphologicalTransformation = None  # 图像形态变换子窗口对象
         self.edgeDetection = None  # 图像边缘检测子窗口对象
         self.contourDetection = None  # 图像轮廓检测子窗口对象
+        self.histogramEqualization = None  # 直方图均衡化子窗口对象
 
         # 信号与槽定义
         self.signal_and_slot()
@@ -40,7 +42,7 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.push_button_2)
         self.ui.pushButton_3.clicked.connect(self.push_button_3)
         self.ui.pushButton_4.clicked.connect(self.push_button_4)
-
+        self.ui.pushButton_5.clicked.connect(self.push_button_5)
         self.ui.pushButton_6.clicked.connect(self.push_button_6)
         self.ui.pushButton_7.clicked.connect(self.push_button_7)
 
@@ -65,6 +67,11 @@ class MainWindow(QMainWindow):
     def push_button_4(self):
         self.morphologicalTransformation = morphologicalTransformation.SubWindow()
         self.morphologicalTransformation.show()
+
+    # 按钮5-直方图均衡化触发事件
+    def push_button_5(self):
+        self.histogramEqualization = histogramEqualization.SubWindow()
+        self.histogramEqualization.show()
 
     # 按钮6-图像边缘检测触发事件
     def push_button_6(self):
