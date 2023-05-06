@@ -5,8 +5,8 @@
 """
 import cv2.cv2 as cv2
 from PyQt5.QtCore import pyqtSignal, QThread
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
 # 子窗口布局
 from userInterface import faceDetectionUI

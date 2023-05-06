@@ -25,14 +25,14 @@ class SubWindow(QMainWindow):
 
     # 绑定事件
     def ui_init(self):
-        # 绑定打开图片并显示事件
-        self.ui.pushButton_choose_img.clicked.connect(self.open_image)
 
-        # 绑定人脸打码并显示打码后的图像事件
-        self.ui.pushButton_character_coding.clicked.connect(self.face_coding)
+        self.ui.pushButton_choose_img.clicked.connect(self.open_image)  # 打开图片
+        self.ui.pushButton_save_img.clicked.connect(self.save_image)  # 保存图片
 
-        # 绑定保存处理后的图片事件
-        self.ui.pushButton_save_img.clicked.connect(self.save_image)
+        self.ui.pushButton_face_coding.clicked.connect(self.face_coding)  # 面部打码
+        self.ui.pushButton_face_reco.clicked.connect(self.face_recognize)  # 面部框线
+        self.ui.pushButton_eye_reco.clicked.connect(self.eyes_recognize)  # 眼部框线
+        self.ui.pushButton_eye_coding.clicked.connect(self.eyes_coding)  # 眼部打码
 
     # 打开图片并显示原图
     def open_image(self):
@@ -84,15 +84,16 @@ class SubWindow(QMainWindow):
         # 复制原图象
         self.cv_dealtImage = self.cv_srcImage.copy()
         # 读取模型文件
-        face = cv2.CascadeClassifier('./dataAccess/static/haarcascade_frontalface_alt.xml')
+        face_cascade = cv2.CascadeClassifier('./dataAccess/static/haarcascade_frontalface_alt.xml')
+
         """
         参数1：image–待检测图片，一般为灰度图像加快检测速度；
         参数2：objects–被检测物体的矩形框向量组；
         参数3：scaleFactor–表示在前后两次相继的扫描中，搜索窗口的比例系数。（默认为1.1）即每次搜索窗口依次扩大10%，该值越大计算的越快，人脸检测也越差;
         参数4：minNeighbors–表示构成检测目标的相邻矩形的最小个数(默认为3个)。
         """
-        # 执行模型，左上顶点（x，y）和w（宽），h（高）
-        faces = face.detectMultiScale(self.cv_dealtImage, scaleFactor=1.2, minNeighbors=2)
+        # 执行人脸识别模型
+        faces = face_cascade.detectMultiScale(self.cv_dealtImage, scaleFactor=1.2, minNeighbors=2)
         print(faces)
 
         # 进行人脸画框
@@ -103,7 +104,7 @@ class SubWindow(QMainWindow):
             frame_box = frame_box[::10, ::10]
             # x轴和y轴同时拉伸10倍，回复原来的大小
             frame_box = np.repeat(frame_box, 10, axis=0)
-            frame_box = np.repeat(frame_box, 10, axis=1)
+            frame_box =  np.repeat(frame_box, 10, axis=1)
             # 获得原脸框的宽高
             a, b = self.cv_dealtImage[y:y + h, x:x + w].shape[:2]
             # 让马赛克的宽高与原脸宽的宽高一样，不让会报错
@@ -112,30 +113,66 @@ class SubWindow(QMainWindow):
         # 显示图像
         self.show_in_dealt_label()
 
-
-
     # 人脸面部识别--画框
     def face_recognize(self):
-
+        # 复制原图像
+        self.cv_dealtImage = self.cv_srcImage.copy()
         # 读取模型文件
-        face = cv2.CascadeClassifier('./dataAccess/static/haarcascade_frontalface_alt.xml')
+        face_cascade = cv2.CascadeClassifier('./dataAccess/static/haarcascade_frontalface_alt.xml')
         """
         参数1：image–待检测图片，一般为灰度图像加快检测速度；
         参数2：objects–被检测物体的矩形框向量组；
         参数3：scaleFactor–表示在前后两次相继的扫描中，搜索窗口的比例系数。（默认为1.1）即每次搜索窗口依次扩大10%，该值越大计算的越快，人脸检测也越差;
         参数4：minNeighbors–表示构成检测目标的相邻矩形的最小个数(默认为3个)。
         """
-        faces = face.detectMultiScale(self.cv_srcImage, scaleFactor=1.2, minNeighbors=2)
+        faces = face_cascade.detectMultiScale(self.cv_dealtImage, scaleFactor=1.2, minNeighbors=2)
         print(faces)
         # 进行人脸画框
         for x, y, w, h in faces:
-            cv2.rectangle(self.cv_srcImage, (x, y), (x + w, y + h), [0, 0, 255], 2)
+            cv2.rectangle(self.cv_dealtImage, (x, y), (x + w, y + h), [0, 0, 255], 2)
 
-        height, width = self.cv_srcImage.shape[0], self.cv_srcImage.shape[1]
-        ui_image = QImage(cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
-        if width > height:
-            ui_image = ui_image.scaledToWidth(self.ui.label_dealt_img.width())
-        else:
-            ui_image = ui_image.scaledToHeight(self.ui.label_dealt_img.height())
+        # 显示图像
+        self.show_in_dealt_label()
 
-        self.ui.label_dealt_img.setPixmap(QPixmap.fromImage(ui_image))
+    # 人物眼睛框线
+    def eyes_recognize(self):
+        # 复制原图像
+        self.cv_dealtImage = self.cv_srcImage.copy()
+
+        # 将图像转为灰度
+        gray = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2GRAY)
+
+        # 加载级联分类器
+        eye_cascade = cv2.CascadeClassifier('./dataAccess/static/haarcascade_eye.xml')
+
+        eyes = eye_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=2)
+
+        for (ex, ey, ew, eh) in eyes:
+            # 眼睛画框
+            cv2.rectangle(self.cv_dealtImage, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+
+        # 显示图像
+        self.show_in_dealt_label()
+
+    # 人物眼睛打码
+    def eyes_coding(self):
+        # 复制原图像
+        self.cv_dealtImage = self.cv_srcImage.copy()
+
+        # 灰度转换
+        gray = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2GRAY)
+
+        eye_cascade = cv2.CascadeClassifier('./dataAccess/static/haarcascade_eye.xml')
+
+        # 人脸检测
+        rects = eye_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=3, minSize=(32, 32))
+        if len(rects) > 0:
+            for rect in rects:
+                x, y, w, h = rect
+                # 打码：使用高斯噪声替换识别出来的人眼所对应的像素值
+                self.cv_dealtImage[y + 10:y + h - 10, x:x + w, 0] = np.random.normal(size=(h - 20, w))
+                self.cv_dealtImage[y + 10:y + h - 10, x:x + w, 1] = np.random.normal(size=(h - 20, w))
+                self.cv_dealtImage[y + 10:y + h - 10, x:x + w, 2] = np.random.normal(size=(h - 20, w))
+
+        # 显示图像
+        self.show_in_dealt_label()

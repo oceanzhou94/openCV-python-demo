@@ -1,6 +1,7 @@
 """
 @Auth ： youngZ
 @File ：makeImageMask.py
+图像掩膜处理逻辑
 """
 import numpy as np
 from PyQt5.QtGui import QImage, QPixmap
