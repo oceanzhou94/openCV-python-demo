@@ -89,6 +89,7 @@ class Ui_MainWindow(object):
         font.setKerning(False)
         self.pushButton_save_img.setFont(font)
         self.pushButton_save_img.setObjectName("pushButton_save_img")
+
         self.scrollArea_2 = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea_2.setGeometry(QtCore.QRect(0, 350, 450, 400))
         self.scrollArea_2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
@@ -119,6 +120,7 @@ class Ui_MainWindow(object):
         self.label_dealt_img.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_dealt_img.setObjectName("label_dealt_img")
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
+
         self.groupBox_3 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_3.setGeometry(QtCore.QRect(690, 110, 280, 211))
         font = QtGui.QFont()
@@ -154,7 +156,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "直方图处理"))
         self.groupBox.setTitle(_translate("MainWindow", "直方图基础"))
         self.pushButton_hist.setText(_translate("MainWindow", "绘制直方图"))
         self.pushButton_calcHist.setText(_translate("MainWindow", "查找直方图"))

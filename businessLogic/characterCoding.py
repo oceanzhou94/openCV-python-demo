@@ -5,7 +5,7 @@
 """
 import numpy as np
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from cv2 import cv2
 
 # 子窗口布局
@@ -20,7 +20,8 @@ class SubWindow(QMainWindow):
         self.ui.setup_ui(self)  # 子窗户初始化
         self.ui_init()  # 事件初始化
         self.cv_srcImage = None  # cv2读取原图
-        self.dst_img = None  # cv2读取处理后图像
+        self.cv_dealtImage = None  # cv2相关处理后的图像
+        self.dst_img = None  # 将cv_dealtImage转换成QImage之后的图像
 
     # 绑定事件
     def ui_init(self):
@@ -38,32 +39,50 @@ class SubWindow(QMainWindow):
         # 获取图片和图片类型
         img_name, img_type = QFileDialog.getOpenFileName(QFileDialog(), '选择图片', '',
                                                          '图像文件(*.jpg *.bmp *.png *.jpeg)')
-        self.cv_srcImage = cv2.imread(img_name)
-
         # cv读取图片
-        self.cv_srcImage = cv2.imread(img_name)
+        if img_name == "":
+            # 未选择图片，弹出消息对话框
+            QMessageBox.critical(self, '错误！', '请选择处理图像', QMessageBox.Close)
 
-        # 调整图片大小--在label中显示正常大小
-        height, width = self.cv_srcImage.shape[0], self.cv_srcImage.shape[1]
-        ui_image = QImage(cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
-        if width > height:
-            ui_image = ui_image.scaledToWidth(self.ui.label_source_img.width())
+            print("读取错误!")
         else:
-            ui_image = ui_image.scaledToHeight(self.ui.label_source_img.height())
+            self.cv_srcImage = cv2.imread(img_name)
+            # 调整图片大小--在label中显示正常大小
+            height, width = self.cv_srcImage.shape[0], self.cv_srcImage.shape[1]
+            ui_image = QImage(cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
 
-        # 将图片显示在label_source_img上面
-        self.ui.label_source_img.setPixmap(QPixmap.fromImage(ui_image))
+            # 将图片显示在label_source_img上面
+            self.ui.label_source_img.setPixmap(QPixmap.fromImage(ui_image))
 
-    # 将处理后的图片保存到本地
+    # 保存图片到本地
     def save_image(self):
         # 前面是地址，后面是文件类型,得到输入地址的文件名和地址txt(*.txt*.xls);;image(*.png)不同类别
         filepath, filetype = QFileDialog.getSaveFileName(self, "文件保存", "/", 'image(*.png)')
 
-        # save方法保存图片到本地，filepath：保存的名称  PNG：保存的格式，-1：质量因素，值越大质量越高，-1表示默认值
-        self.dst_img.save(filepath, 'PNG', -1)
+        try:
+            # save方法保存图片到本地，filepath：保存的名称  PNG：保存的格式，-1：质量因素，值越大质量越高，-1表示默认值
+            self.dst_img.save(filepath, 'PNG', -1)
+        except Exception as error:
+            # 消息弹出保存失败
+            QMessageBox.critical(self, '错误！', "图像保存失败", QMessageBox.Close)
+            print("保存失败，错误：", error)
+        else:
+            # 消息弹出保存成功
+            QMessageBox.information(self, "通知", "图像保存成功", QMessageBox.Close)
+
+    # 显示处理后的图片到label_dealt_img
+    def show_in_dealt_label(self):
+        # 图片转换成QImage类型
+        height, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]
+        self.dst_img = QImage(cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
+
+        # 将图片显示在label_dealt_img上面
+        self.ui.label_dealt_img.setPixmap(QPixmap.fromImage(self.dst_img))
 
     # 人物面部打码逻辑实现
     def face_coding(self):
+        # 复制原图象
+        self.cv_dealtImage = self.cv_srcImage.copy()
         # 读取模型文件
         face = cv2.CascadeClassifier('./dataAccess/static/haarcascade_frontalface_alt.xml')
         """
@@ -73,31 +92,27 @@ class SubWindow(QMainWindow):
         参数4：minNeighbors–表示构成检测目标的相邻矩形的最小个数(默认为3个)。
         """
         # 执行模型，左上顶点（x，y）和w（宽），h（高）
-        faces = face.detectMultiScale(self.cv_srcImage, scaleFactor=1.2, minNeighbors=2)
+        faces = face.detectMultiScale(self.cv_dealtImage, scaleFactor=1.2, minNeighbors=2)
         print(faces)
 
         # 进行人脸画框
         for x, y, w, h in faces:
             # 获取人脸的位置
-            frame_box = self.cv_srcImage[y:y + h, x:x + w]
+            frame_box = self.cv_dealtImage[y:y + h, x:x + w]
             # 缩小十倍
             frame_box = frame_box[::10, ::10]
             # x轴和y轴同时拉伸10倍，回复原来的大小
             frame_box = np.repeat(frame_box, 10, axis=0)
             frame_box = np.repeat(frame_box, 10, axis=1)
             # 获得原脸框的宽高
-            a, b = self.cv_srcImage[y:y + h, x:x + w].shape[:2]
+            a, b = self.cv_dealtImage[y:y + h, x:x + w].shape[:2]
             # 让马赛克的宽高与原脸宽的宽高一样，不让会报错
-            self.cv_srcImage[y:y + h, x:x + w] = frame_box[:a, :b]
+            self.cv_dealtImage[y:y + h, x:x + w] = frame_box[:a, :b]
 
-        height, width = self.cv_srcImage.shape[0], self.cv_srcImage.shape[1]
-        self.dst_img = QImage(cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
-        if width > height:
-            ui_image = self.dst_img.scaledToWidth(self.ui.label_dealt_img.width())
-        else:
-            ui_image = self.dst_img.scaledToHeight(self.ui.label_dealt_img.height())
+        # 显示图像
+        self.show_in_dealt_label()
 
-        self.ui.label_dealt_img.setPixmap(QPixmap.fromImage(ui_image))
+
 
     # 人脸面部识别--画框
     def face_recognize(self):
