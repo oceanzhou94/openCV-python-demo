@@ -75,11 +75,23 @@ class SubWindow(QMainWindow):
     # 显示处理后的图片到label_dealt_img
     def show_in_dealt_label(self):
         # 图片转换成QImage类型
-        height, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]
-        self.dst_img = QImage(cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB), width, height,
-                              QImage.Format_RGB888)
+        hight, width, channel = self.cv_dealtImage.shape
+        print("通道数：", channel)
+        q_image = None
+        # 4通道类型的图
+        if channel == 4:
+            q_image = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGBA)
+            q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB32)
+        # 3通道类型的图
+        elif channel == 3:
+            q_image = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB)
+            q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB888)
+        # 单通道类型的图
+        elif channel == 1:
+            q_image = QImage(self.cv_dealtImage.data, width, hight, QImage.Format_Grayscale8)
 
         # 将图片显示在label_dealt_img上面
+        self.dst_img = q_image
         self.ui.label_dealt_img.setPixmap(QPixmap.fromImage(self.dst_img))
 
     # 显示当前图像的信息

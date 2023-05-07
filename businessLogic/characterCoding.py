@@ -43,16 +43,25 @@ class SubWindow(QMainWindow):
         if img_name == "":
             # 未选择图片，弹出消息对话框
             QMessageBox.critical(self, '错误！', '请选择处理图像', QMessageBox.Close)
-
-            print("读取错误!")
         else:
             self.cv_srcImage = cv2.imread(img_name)
-            # 调整图片大小--在label中显示正常大小
-            height, width = self.cv_srcImage.shape[0], self.cv_srcImage.shape[1]
-            ui_image = QImage(cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
-
+            # 转换cv_srcImage类型为QImage
+            hight, width, channel = self.cv_srcImage.shape
+            print("通道数：", channel)
+            q_image = None
+            # 4通道类型的图
+            if channel == 4:
+                q_image = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGBA)
+                q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB32)
+            # 3通道类型的图
+            elif channel == 3:
+                q_image = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB)
+                q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB888)
+            # 单通道类型的图
+            elif channel == 1:
+                q_image = QImage(self.cv_srcImage.data, width, hight, QImage.Format_Grayscale8)
             # 将图片显示在label_source_img上面
-            self.ui.label_source_img.setPixmap(QPixmap.fromImage(ui_image))
+            self.ui.label_source_img.setPixmap(QPixmap.fromImage(q_image))
 
     # 保存图片到本地
     def save_image(self):
@@ -73,10 +82,23 @@ class SubWindow(QMainWindow):
     # 显示处理后的图片到label_dealt_img
     def show_in_dealt_label(self):
         # 图片转换成QImage类型
-        height, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]
-        self.dst_img = QImage(cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
+        hight, width, channel = self.cv_dealtImage.shape
+        print("通道数：", channel)
+        q_image = None
+        # 4通道类型的图
+        if channel == 4:
+            q_image = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGBA)
+            q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB32)
+        # 3通道类型的图
+        elif channel == 3:
+            q_image = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB)
+            q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB888)
+        # 单通道类型的图
+        elif channel == 1:
+            q_image = QImage(self.cv_dealtImage.data, width, hight, QImage.Format_Grayscale8)
 
         # 将图片显示在label_dealt_img上面
+        self.dst_img = q_image
         self.ui.label_dealt_img.setPixmap(QPixmap.fromImage(self.dst_img))
 
     # 人物面部打码逻辑实现
@@ -104,7 +126,7 @@ class SubWindow(QMainWindow):
             frame_box = frame_box[::10, ::10]
             # x轴和y轴同时拉伸10倍，回复原来的大小
             frame_box = np.repeat(frame_box, 10, axis=0)
-            frame_box =  np.repeat(frame_box, 10, axis=1)
+            frame_box = np.repeat(frame_box, 10, axis=1)
             # 获得原脸框的宽高
             a, b = self.cv_dealtImage[y:y + h, x:x + w].shape[:2]
             # 让马赛克的宽高与原脸宽的宽高一样，不让会报错

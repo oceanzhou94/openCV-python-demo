@@ -5,7 +5,7 @@
 """
 import numpy as np
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTableWidgetItem
+from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTableWidgetItem, QMessageBox
 from cv2 import cv2
 from userInterface import contourDetectionUI
 
@@ -57,30 +57,63 @@ class SubWindow(QMainWindow):
         img_name, img_type = QFileDialog.getOpenFileName(QFileDialog(), '选择图片', '',
                                                          '图像文件(*.jpg *.bmp *.png *.jpeg)')
         # cv读取图片
-        self.cv_srcImage = cv2.imread(img_name)
-
-        # 将cv读取的图像装换成QImage类型
-        height, width = self.cv_srcImage.shape[0], self.cv_srcImage.shape[1]
-        ui_image = QImage(cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
-
-        # 将图片显示在label_source_img上面
-        self.ui.label_source_img.setPixmap(QPixmap.fromImage(ui_image))
+        if img_name == "":
+            # 未选择图片，弹出消息对话框
+            QMessageBox.critical(self, '错误！', '请选择处理图像', QMessageBox.Close)
+        else:
+            self.cv_srcImage = cv2.imread(img_name)
+            # 转换cv_srcImage类型为QImage
+            hight, width, channel = self.cv_srcImage.shape
+            q_image = None
+            # 4通道类型的图
+            if channel == 4:
+                q_image = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGBA)
+                q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB32)
+            # 3通道类型的图
+            elif channel == 3:
+                q_image = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB)
+                q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB888)
+            # 单通道类型的图
+            elif channel == 1:
+                q_image = QImage(self.cv_srcImage.data, width, hight, QImage.Format_Grayscale8)
+            # 将图片显示在label_source_img上面
+            self.ui.label_source_img.setPixmap(QPixmap.fromImage(q_image))
 
     # 保存图片到本地
     def save_image(self):
         # 前面是地址，后面是文件类型,得到输入地址的文件名和地址txt(*.txt*.xls);;image(*.png)不同类别
         filepath, filetype = QFileDialog.getSaveFileName(self, "文件保存", "/", 'image(*.png)')
 
-        # save方法保存图片到本地，filepath：保存的名称  PNG：保存的格式，-1：质量因素，值越大质量越高，-1表示默认值
-        self.dst_img.save(filepath, 'PNG', -1)
+        try:
+            # save方法保存图片到本地，filepath：保存的名称  PNG：保存的格式，-1：质量因素，值越大质量越高，-1表示默认值
+            self.dst_img.save(filepath, 'PNG', -1)
+        except Exception as error:
+            # 消息弹出保存失败
+            QMessageBox.critical(self, '错误！', "图像保存失败", QMessageBox.Close)
+            print("保存失败，错误：", error)
+        else:
+            # 消息弹出保存成功
+            QMessageBox.information(self, "通知", "图像保存成功", QMessageBox.Close)
 
     # 显示处理后的图片到label_dealt_img
     def show_in_dealt_label(self):
         # 图片转换成QImage类型
-        height, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]
-        self.dst_img = QImage(cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB), width, height, QImage.Format_RGB888)
+        hight, width, channel = self.cv_dealtImage.shape
+        q_image = None
+        # 4通道类型的图
+        if channel == 4:
+            q_image = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGBA)
+            q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB32)
+        # 3通道类型的图
+        elif channel == 3:
+            q_image = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB)
+            q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB888)
+        # 单通道类型的图
+        elif channel == 1:
+            q_image = QImage(self.cv_dealtImage.data, width, hight, QImage.Format_Grayscale8)
 
         # 将图片显示在label_dealt_img上面
+        self.dst_img = q_image
         self.ui.label_dealt_img.setPixmap(QPixmap.fromImage(self.dst_img))
 
     # 查找轮廓并输出相应的数据
@@ -94,11 +127,6 @@ class SubWindow(QMainWindow):
         # 查找轮廓，返回值有3个，取后两个
         self.contours = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]  # 轮廓
         self.hierarchy = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[2]  # 层次
-
-        # 打印相关数据
-        print('轮廓类型：', type(self.contours))
-        print('轮廓个数：', len(self.contours))
-        print('层次类型：', type(self.contours))
 
         # 相关数据写入表格
         item_type_contours = QTableWidgetItem(str(type(self.contours)))  # 轮廓类型
@@ -152,7 +180,6 @@ class SubWindow(QMainWindow):
             # 得到每个轮廓的矩
             m = cv2.moments(self.contours[n])
             # 输出轮廓矩
-            print(f"轮廓{n}的矩{m}")
             # 在label中显示
             text += f"轮廓{n}的矩：{m}\n"
             self.ui.label_result.setText(text)
@@ -167,8 +194,6 @@ class SubWindow(QMainWindow):
         for n in range(len(self.contours)):
             # 计算轮廓面积
             m = cv2.contourArea(self.contours[n])
-            # 输出轮廓面积
-            print(f"轮廓{n}的面积：{m}")
             text += f"轮廓{n}的面积：{m}\n"
 
         self.ui.label_result.setText(text)
@@ -183,8 +208,6 @@ class SubWindow(QMainWindow):
         for n in range(len(self.contours)):
             # 计算轮廓长度
             m = cv2.arcLength(self.contours[n], True)
-            # 输出轮廓长度
-            print(f"轮廓{n}的长度：{m}")
             text += f"轮廓{n}的长度：{m}\n"
 
         self.ui.label_result.setText(text)
@@ -243,7 +266,6 @@ class SubWindow(QMainWindow):
         # 计算直边界矩形
         ret = cv2.boundingRect(self.contours[0])
 
-        print('直边界矩形：\n', ret)
         text = "直边界矩形四元组\n(矩形左上角x坐标,矩形左上角y坐标,矩形的宽度,矩形的高度)\n" + str(ret)
         self.ui.label_result.setText(text)
 
