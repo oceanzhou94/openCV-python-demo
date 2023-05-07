@@ -13,6 +13,7 @@ from businessLogic import makeImageMask, morphologicalTransformation
 from businessLogic import contourDetection
 from businessLogic import histogramEqualization
 from businessLogic import templateMatch
+from businessLogic import imageSegmentation
 
 
 class MainWindow(QMainWindow):
@@ -34,6 +35,7 @@ class MainWindow(QMainWindow):
         self.contourDetection = None  # 图像轮廓检测子窗口对象
         self.histogramEqualization = None  # 直方图均衡化子窗口对象
         self.templateMatch = None  # 图像模板匹配子窗口对象
+        self.imageSegmentation = None  # 图像分割功能子窗口对象
 
         # 信号与槽定义
         self.signal_and_slot()
@@ -48,6 +50,7 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_6.clicked.connect(self.push_button_6)
         self.ui.pushButton_7.clicked.connect(self.push_button_7)
         self.ui.pushButton_8.clicked.connect(self.push_button_8)
+        self.ui.pushButton_9.clicked.connect(self.push_button_9)
 
         self.ui.pushButton_12.clicked.connect(self.push_button_12)
 
@@ -90,6 +93,11 @@ class MainWindow(QMainWindow):
     def push_button_8(self):
         self.templateMatch = templateMatch.SubWindow()
         self.templateMatch.show()
+
+    # 按钮9-图像分割功能触发事件
+    def push_button_9(self):
+        self.imageSegmentation = imageSegmentation.SubWindow()
+        self.imageSegmentation.show()
 
     # 按钮12-人脸识别检测触发事件
     def push_button_12(self):
