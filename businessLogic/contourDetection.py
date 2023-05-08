@@ -4,7 +4,7 @@
 图像轮廓检测处理逻辑
 """
 import numpy as np
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTableWidgetItem, QMessageBox
 from cv2 import cv2
 from userInterface import contourDetectionUI
@@ -27,6 +27,9 @@ class SubWindow(QMainWindow):
         self.contours = None  # 轮廓
         self.hierarchy = None  # 层次
         self.white_image = None  # 白色图像
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
     # 绑定事件
     def ui_init(self):

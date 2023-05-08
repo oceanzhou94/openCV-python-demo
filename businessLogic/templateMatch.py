@@ -4,7 +4,7 @@
 图像模板匹配处理逻辑
 """
 
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTableWidgetItem, QMessageBox
 from cv2 import cv2
 from userInterface import templateMatchUI
@@ -24,6 +24,9 @@ class SubWindow(QMainWindow):
         self.cv_tmpImage = None  # cv读取的模板图片
         self.cv_dealtImage = None  # 处理后的图片，类型为cv2
         self.dst_img = None  # 处理后的图片 类型为QImage，保存图片时使用
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
     # 绑定事件
     def ui_init(self):

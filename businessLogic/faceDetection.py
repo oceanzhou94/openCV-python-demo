@@ -7,7 +7,7 @@
 import qimage2ndarray
 from PyQt5 import QtCore
 from cv2 import cv2
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 
 # 子窗口布局
@@ -24,6 +24,9 @@ class SubWindow(QMainWindow):
         self.cap = None  # 摄像头数据
         self.image = None  # 捕获的图像
         self.timer_camera = QtCore.QTimer()  # 定时器
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
     # 使用信号槽触发事件
     def ui_init(self):

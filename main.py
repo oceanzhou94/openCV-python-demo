@@ -14,8 +14,10 @@ from tools import loadPage
 def main():
     app = QApplication(sys.argv)
     splash = QSplashScreen()
-    splash.setPixmap(QPixmap("loadPage.jpg"))  # 设置背景图片
-    splash.setFont(QFont('微软雅黑', 10))  # 设置字体
+    # 设置背景图片
+    splash.setPixmap(QPixmap('./dataAccess/image/loadPage.jpg'))
+    # 设置字体
+    splash.setFont(QFont('微软雅黑', 10))
     splash.show()
     app.processEvents()  # 处理主进程，不卡顿
     form = loadPage.Form(splash)

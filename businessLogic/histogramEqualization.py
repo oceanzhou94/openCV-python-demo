@@ -6,7 +6,7 @@
 import os
 
 import numpy as np
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from cv2 import cv2
 import matplotlib.pyplot as plt
@@ -31,6 +31,9 @@ class SubWindow(QMainWindow):
 
         self.dst_img1 = None  # 对比直方图处理
         self.dst_img2 = None
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
     # 绑定事件
     def ui_init(self):
@@ -293,7 +296,7 @@ class SubWindow(QMainWindow):
 
         h, s, v = cv2.split(img2)
         # 计算颜色直方图
-        hist, x, y = np.histogram2d(h.ravel(), s.ravel(),[180, 256], [[0, 180], [0, 256]])
+        hist, x, y = np.histogram2d(h.ravel(), s.ravel(), [180, 256], [[0, 180], [0, 256]])
 
         # 每次绘制之前清空画布
         plt.clf()

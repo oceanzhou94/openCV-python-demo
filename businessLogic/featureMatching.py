@@ -4,7 +4,7 @@
 图像特征匹配逻辑处理
 """
 
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 from cv2 import cv2
 
@@ -24,6 +24,9 @@ class SubWindow(QMainWindow):
         self.cv_dealtImage = None  # 处理后的图片，类型为cv2
         self.cv_selectImage = None  # 查询图片
         self.dst_img = None  # 处理后的图片 类型为QImage，保存图片时使用
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
     # 绑定事件
     def ui_init(self):

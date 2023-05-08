@@ -6,7 +6,7 @@
 import os
 
 import numpy as np
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QTableWidgetItem, QMessageBox
 from cv2 import cv2
 from matplotlib import pyplot as plt
@@ -30,6 +30,9 @@ class SubWindow(QMainWindow):
 
         self.normal_fusion = None  # 普通融合的结果
         self.pyramid_fusion = None  # 金字塔融合的结果
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
     # 绑定事件
     def ui_init(self):

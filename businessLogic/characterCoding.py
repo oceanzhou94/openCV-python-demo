@@ -4,7 +4,7 @@
 人物图像打码逻辑处理
 """
 import numpy as np
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from cv2 import cv2
 
@@ -22,6 +22,9 @@ class SubWindow(QMainWindow):
         self.cv_srcImage = None  # cv2读取原图
         self.cv_dealtImage = None  # cv2相关处理后的图像
         self.dst_img = None  # 将cv_dealtImage转换成QImage之后的图像
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
     # 绑定事件
     def ui_init(self):

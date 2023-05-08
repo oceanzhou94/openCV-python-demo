@@ -3,7 +3,7 @@
 @File ：geometricTransformation.py
 图像几何变换逻辑处理
 """
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from cv2 import cv2
 
@@ -24,6 +24,9 @@ class SubWindow(QMainWindow):
         self.cv_srcImage = None  # cv读取图片
         self.cv_dealtImage = None  # 处理后的图片，类型为cv2
         self.dst_img = None  # 处理后的图片 类型为QImage
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
         self.label_w = self.ui.label_dealt_img.width()  # 获取显示处理后图片控件的宽度
         self.label_h = self.ui.label_dealt_img.height()  # 获取显示处理后图片控件的高度

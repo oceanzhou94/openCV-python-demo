@@ -2,6 +2,9 @@
 @Auth ： youngZ
 @File ：mainWindow.py
 """
+import sys
+
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow
 
 from userInterface import mainWindowUI
@@ -16,6 +19,7 @@ from businessLogic import templateMatch
 from businessLogic import imageSegmentation
 from businessLogic import featureDetection
 from businessLogic import featureMatching
+from businessLogic import about
 
 
 class MainWindow(QMainWindow):
@@ -25,7 +29,7 @@ class MainWindow(QMainWindow):
         # 布局初始化
 
         self.ui = mainWindowUI.Ui_MainWindow()
-        self.ui.setupUi(MainWindow=self)
+        self.ui.setup_ui(MainWindow=self)
 
         # 子窗口实例化命名空间
         self.characterCoding = None  # 人物图像打码子窗口对象
@@ -40,6 +44,10 @@ class MainWindow(QMainWindow):
         self.imageSegmentation = None  # 图像分割功能子窗口对象
         self.featureDetection = None  # 图像检测功能子窗口对象
         self.featureMatching = None  # 图像特征匹配子窗口对象
+        self.about = None  # 关于子窗口对象
+
+        # 图标
+        self.setWindowIcon(QIcon('./dataAccess/icon/icon.ico'))
 
         # 信号与槽定义
         self.signal_and_slot()
@@ -58,6 +66,8 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_10.clicked.connect(self.push_button_10)
         self.ui.pushButton_11.clicked.connect(self.push_button_11)
         self.ui.pushButton_12.clicked.connect(self.push_button_12)
+        self.ui.pushButton_exit.clicked.connect(self.push_button_exit)
+        self.ui.pushButton_about.clicked.connect(self.push_button_about)
 
     # 按钮1-人物图像打码触发事件
     def push_button_1(self):
@@ -118,3 +128,15 @@ class MainWindow(QMainWindow):
     def push_button_12(self):
         self.faceDetection = faceDetection.SubWindow()
         self.faceDetection.show()
+
+    # 退出程序按钮
+    def push_button_exit(self):
+        sys.exit()
+
+    # 关于按钮
+    def push_button_about(self):
+        self.about = about.SubWindow()
+        self.about.show()
+
+
+
