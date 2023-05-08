@@ -4,7 +4,6 @@
 图像特征匹配逻辑处理
 """
 
-import numpy as np
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 from cv2 import cv2
