@@ -145,7 +145,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "图像特征匹配"))
         self.pushButton_save_img.setText(_translate("MainWindow", "保存图片"))
         self.label_select_img.setText(_translate("MainWindow", "训练图像"))
         self.label_dealt_img.setText(_translate("MainWindow", "结果图像"))

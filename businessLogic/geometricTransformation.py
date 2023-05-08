@@ -104,7 +104,6 @@ class SubWindow(QMainWindow):
     def show_in_dealt_label(self):
         # 图片转换成QImage类型
         hight, width, channel = self.cv_dealtImage.shape
-        print("通道数：", channel)
         q_image = None
         # 4通道类型的图
         if channel == 4:
@@ -126,7 +125,6 @@ class SubWindow(QMainWindow):
     def picture_scaling_ok(self):
         # 从doubleSpinBox中获取缩放数值倍数
         value = self.ui.doubleSpinBox.value()
-        print("缩放倍数：" + str(value))
 
         # 调整图片缩放大小
         self.cv_dealtImage = cv2.resize(self.cv_srcImage, dsize=None, fx=value, fy=value)
@@ -153,7 +151,6 @@ class SubWindow(QMainWindow):
 
         # 从滑动组件获取旋转角度
         angle = self.ui.horizontalSlider.value()
-        print(f"旋转角度：{angle}")
 
         # 按图像中心点旋转，
         center = cv2.getRotationMatrix2D(((cols - 1) / 2.0, (rows - 1) / 2.0), angle, 1)

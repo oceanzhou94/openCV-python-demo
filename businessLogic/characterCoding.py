@@ -47,7 +47,6 @@ class SubWindow(QMainWindow):
             self.cv_srcImage = cv2.imread(img_name)
             # 转换cv_srcImage类型为QImage
             hight, width, channel = self.cv_srcImage.shape
-            print("通道数：", channel)
             q_image = None
             # 4通道类型的图
             if channel == 4:
@@ -83,7 +82,6 @@ class SubWindow(QMainWindow):
     def show_in_dealt_label(self):
         # 图片转换成QImage类型
         hight, width, channel = self.cv_dealtImage.shape
-        print("通道数：", channel)
         q_image = None
         # 4通道类型的图
         if channel == 4:
@@ -116,7 +114,7 @@ class SubWindow(QMainWindow):
         """
         # 执行人脸识别模型
         faces = face_cascade.detectMultiScale(self.cv_dealtImage, scaleFactor=1.2, minNeighbors=2)
-        print(faces)
+
 
         # 进行人脸画框
         for x, y, w, h in faces:
@@ -148,7 +146,6 @@ class SubWindow(QMainWindow):
         参数4：minNeighbors–表示构成检测目标的相邻矩形的最小个数(默认为3个)。
         """
         faces = face_cascade.detectMultiScale(self.cv_dealtImage, scaleFactor=1.2, minNeighbors=2)
-        print(faces)
         # 进行人脸画框
         for x, y, w, h in faces:
             cv2.rectangle(self.cv_dealtImage, (x, y), (x + w, y + h), [0, 0, 255], 2)

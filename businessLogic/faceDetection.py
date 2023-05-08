@@ -39,7 +39,7 @@ class SubWindow(QMainWindow):
     def open_capture(self):
         self.cap = cv2.VideoCapture(0)
         # 设置格式解决延迟问题
-        self.cap.set(cv2.cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+        self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
         # 定时器每50ms刷新一次图像
         self.timer_camera.start(20)
         # 设置超时的操作

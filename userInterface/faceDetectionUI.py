@@ -140,7 +140,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "动态人脸识别"))
         self.label.setText(_translate("MainWindow", "摄像头视频"))
         self.groupBox.setTitle(_translate("MainWindow", "操作"))
         self.pushButton_open.setText(_translate("MainWindow", "打开摄像头"))
