@@ -131,10 +131,9 @@ class SubWindow(QMainWindow):
         # 距离转换
         img_dist = cv2.distanceTransform(img_open, cv2.DIST_L2, 5)
         # 图像类型转换成uint8
-        img_dist = cv2.convertScaleAbs(img_dist)
+        img_dist = np.uint8(img_dist)
         # 归一化处理
         img_dist = cv2.normalize(img_dist, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
-
         # 显示图像
         self.cv_dealtImage = img_dist
         self.show_in_dealt_label()
@@ -174,7 +173,7 @@ class SubWindow(QMainWindow):
         plt.axis('off')
         # 将原图中被标记点设置为绿色
         img[imgwater == -1] = [0, 255, 0]
-        # 保存直方图
+        # 保存图
         plt.savefig("./dataAccess/histogram/watershed.png")
         # 类型转换成QPixmap
         self.dst_img = QPixmap("./dataAccess/histogram/watershed.png")
@@ -196,7 +195,7 @@ class SubWindow(QMainWindow):
         # 第1次提取前景,矩形模式
         cv2.grabCut(img, mask, rect, bg, fg, 5, cv2.GC_INIT_WITH_RECT)
         # 读取已标注的掩模图像
-        imgmask = cv2.imread('./dataAccess/testImage/test_hehua2.jpg')
+        imgmask = cv2.imread('./dataAccess/image/test_hehua2.jpg')
         # cv2.imshow('mask image', imgmask)
         # 转换为单通道灰度图像
         mask2 = cv2.cvtColor(imgmask, cv2.COLOR_BGR2GRAY, dstCn=1)
