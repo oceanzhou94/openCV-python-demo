@@ -52,18 +52,22 @@ class SubWindow(QMainWindow):
         else:
             self.cv_srcImage = cv2.imread(img_name)
             # 转换cv_srcImage类型为QImage
-            hight, width, channel = self.cv_srcImage.shape
             q_image = None
-            # 4通道类型的图
-            if channel == 4:
-                q_image = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGBA)
-                q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB32)
-            # 3通道类型的图
-            elif channel == 3:
-                q_image = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB)
-                q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB888)
-            # 单通道类型的图
-            elif channel == 1:
+            # 多通道类型图片
+            if len(self.cv_srcImage.shape) == 3:
+                hight, width, channel = self.cv_srcImage.shape
+                # 4通道类型的图
+                if channel == 4:
+                    q_image = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGBA)
+                    q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB32)
+                # 3通道类型的图
+                elif channel == 3:
+                    q_image = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2RGB)
+                    q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB888)
+            # 单通道类型图片
+            elif len(self.cv_srcImage.shape) == 2:
+                hight, width = self.cv_srcImage.shape
+                # 单通道类型的图
                 q_image = QImage(self.cv_srcImage.data, width, hight, QImage.Format_Grayscale8)
 
             # 将图片显示在label_source_img上面
@@ -89,8 +93,8 @@ class SubWindow(QMainWindow):
     def show_in_dealt_label(self):
         # 图片转换成QImage类型
         q_image = None
+        # 多通道类型图片
         if len(self.cv_dealtImage.shape) == 3:
-            # 多通道类型图片
             hight, width, channel = self.cv_dealtImage.shape
             # 4通道类型的图
             if channel == 4:
@@ -100,9 +104,8 @@ class SubWindow(QMainWindow):
             elif channel == 3:
                 q_image = cv2.cvtColor(self.cv_dealtImage, cv2.COLOR_BGR2RGB)
                 q_image = QImage(q_image.data, width, hight, width * channel, QImage.Format_RGB888)
-
+        # 单通道类型图片
         elif len(self.cv_dealtImage.shape) == 2:
-            # 单通道类型图片
             hight, width = self.cv_dealtImage.shape
             # 单通道类型的图
             q_image = QImage(self.cv_dealtImage.data, width, hight, QImage.Format_Grayscale8)
