@@ -50,7 +50,7 @@ class Ui_MainWindow(object):
         self.pushButton_polylines.setFont(font)
         self.pushButton_polylines.setObjectName("pushButton_polylines")
         self.tableWidget = QtWidgets.QTableWidget(self.groupBox)
-        self.tableWidget.setGeometry(QtCore.QRect(130, 29, 251, 141))
+        self.tableWidget.setGeometry(QtCore.QRect(125, 29, 260, 145))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.tableWidget.setFont(font)
