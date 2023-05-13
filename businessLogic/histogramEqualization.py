@@ -167,9 +167,9 @@ class SubWindow(QMainWindow):
         plt.clf()
 
         mask[w1:w2, h1:h2] = 255  # 设置掩模白色区域
-        histb = cv2.calcHist([img], [0], None, [256], [0, 255])  # 计算B通道直方图
-        histg = cv2.calcHist([img], [1], None, [256], [0, 255])  # 计算G通道直方图
-        histr = cv2.calcHist([img], [2], None, [256], [0, 255])  # 计算R通道直方图
+        histb = cv2.calcHist([img], [0], mask, [256], [0, 255])  # 计算B通道直方图
+        histg = cv2.calcHist([img], [1], mask, [256], [0, 255])  # 计算G通道直方图
+        histr = cv2.calcHist([img], [2], mask, [256], [0, 255])  # 计算R通道直方图
         plt.plot(histb, color='b')  # 绘制B通道直方图，蓝色
         plt.plot(histg, color='g')  # 绘制G通道直方图，绿色
         plt.plot(histr, color='r')  # 绘制R通道直方图，红色
@@ -194,7 +194,7 @@ class SubWindow(QMainWindow):
         # 每次绘制之前清空画布
         plt.clf()
 
-        histb, e1 = np.histogram(img.ravel(), 256, [0, 256])  # 计算B通道直方图
+        histb, e1 = np.histogram(img[0].ravel(), 256, [0, 256])  # 计算B通道直方图
         histg, e2 = np.histogram(img[1].ravel(), 256, [0, 256])  # 计算G通道直方图
         histr, e3 = np.histogram(img[2].ravel(), 256, [0, 256])  # 计算R通道直方图
         plt.plot(histb, color='b')  # 绘制B通道直方图，蓝色
