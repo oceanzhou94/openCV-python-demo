@@ -129,6 +129,8 @@ class SubWindow(QMainWindow):
         # 显示图像
         self.cv_dealtImage = img
         self.show_in_dealt_label()
+        # 结果显示归位
+        self.ui.label_result.setText("结果显示")
 
     # 优化哈里斯角检测
     def corner_subpix(self):
@@ -163,6 +165,8 @@ class SubWindow(QMainWindow):
         # 显示图像
         self.cv_dealtImage = img
         self.show_in_dealt_label()
+        # 结果显示归位
+        self.ui.label_result.setText("结果显示")
 
     # Shi-Tomasi角检测
     def good_features_to_track(self):
@@ -184,6 +188,8 @@ class SubWindow(QMainWindow):
         # 显示图像
         self.cv_dealtImage = img
         self.show_in_dealt_label()
+        # 结果显示归位
+        self.ui.label_result.setText("结果显示")
 
     # FAST关键点检测
     def fast_detection(self):

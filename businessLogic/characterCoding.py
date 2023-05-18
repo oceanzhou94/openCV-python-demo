@@ -127,7 +127,6 @@ class SubWindow(QMainWindow):
         # 执行人脸识别模型
         faces = face_cascade.detectMultiScale(self.cv_dealtImage, scaleFactor=1.2, minNeighbors=2)
 
-
         # 进行人脸画框
         for x, y, w, h in faces:
             # 获取人脸的位置
@@ -176,7 +175,7 @@ class SubWindow(QMainWindow):
         # 加载级联分类器
         eye_cascade = cv2.CascadeClassifier('./dataAccess/static/haarcascade_eye.xml')
 
-        eyes = eye_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=2)
+        eyes = eye_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=3)
 
         for (ex, ey, ew, eh) in eyes:
             # 眼睛画框
