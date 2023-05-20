@@ -158,7 +158,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "创建图像掩膜"))
         self.pushButton_save_img.setText(_translate("MainWindow", "保存图片"))
         self.groupBox.setTitle(_translate("MainWindow", "默认图像掩膜"))
-        self.pushButton_Normask.setText(_translate("MainWindow", "创建默认掩膜"))
+        self.pushButton_Normask.setText(_translate("MainWindow", "默认掩膜"))
         self.textBrowser.setHtml(_translate("MainWindow",
                                             "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                             "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
