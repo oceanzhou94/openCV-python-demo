@@ -29,6 +29,7 @@ class Ui_MainWindow(object):
         self.label_13.setFont(font)
         self.label_13.setAlignment(QtCore.Qt.AlignCenter)
         self.label_13.setObjectName("label_13")
+
         self.pushButton_about = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_about.setGeometry(QtCore.QRect(80, 535, 100, 40))
         font = QtGui.QFont()

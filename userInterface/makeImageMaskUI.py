@@ -110,15 +110,19 @@ class Ui_MainWindow(object):
         self.groupBox_3.setFont(font)
         self.groupBox_3.setAlignment(QtCore.Qt.AlignCenter)
         self.groupBox_3.setObjectName("groupBox_3")
+
         self.groupBox_4 = QtWidgets.QGroupBox(self.groupBox_3)
         self.groupBox_4.setGeometry(QtCore.QRect(10, 20, 110, 50))
         self.groupBox_4.setObjectName("groupBox_4")
+
         self.lineEdit_width = QtWidgets.QLineEdit(self.groupBox_4)
         self.lineEdit_width.setGeometry(QtCore.QRect(10, 20, 91, 21))
         self.lineEdit_width.setObjectName("lineEdit_width")
+
         self.groupBox_5 = QtWidgets.QGroupBox(self.groupBox_3)
         self.groupBox_5.setGeometry(QtCore.QRect(150, 20, 110, 50))
         self.groupBox_5.setObjectName("groupBox_5")
+
         self.lineEdit_hight = QtWidgets.QLineEdit(self.groupBox_5)
         self.lineEdit_hight.setGeometry(QtCore.QRect(10, 20, 91, 21))
         self.lineEdit_hight.setObjectName("lineEdit_hight")
@@ -129,15 +133,19 @@ class Ui_MainWindow(object):
         self.groupBox_6.setFont(font)
         self.groupBox_6.setAlignment(QtCore.Qt.AlignCenter)
         self.groupBox_6.setObjectName("groupBox_6")
+
         self.groupBox_7 = QtWidgets.QGroupBox(self.groupBox_6)
         self.groupBox_7.setGeometry(QtCore.QRect(10, 20, 110, 50))
         self.groupBox_7.setObjectName("groupBox_7")
+
         self.lineEdit_X = QtWidgets.QLineEdit(self.groupBox_7)
         self.lineEdit_X.setGeometry(QtCore.QRect(10, 20, 91, 21))
         self.lineEdit_X.setObjectName("lineEdit_X")
+
         self.groupBox_8 = QtWidgets.QGroupBox(self.groupBox_6)
         self.groupBox_8.setGeometry(QtCore.QRect(150, 20, 110, 50))
         self.groupBox_8.setObjectName("groupBox_8")
+
         self.lineEdit_Y = QtWidgets.QLineEdit(self.groupBox_8)
         self.lineEdit_Y.setGeometry(QtCore.QRect(10, 20, 91, 21))
         self.lineEdit_Y.setObjectName("lineEdit_Y")

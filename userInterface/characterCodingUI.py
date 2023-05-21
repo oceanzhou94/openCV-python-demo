@@ -14,6 +14,7 @@ class Ui_MainWindow(object):
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox.setGeometry(QtCore.QRect(300, 70, 400, 220))
         font = QtGui.QFont()
@@ -24,6 +25,7 @@ class Ui_MainWindow(object):
         self.groupBox.setFont(font)
         self.groupBox.setAlignment(QtCore.Qt.AlignCenter)
         self.groupBox.setObjectName("groupBox")
+
         self.pushButton_face_reco = QtWidgets.QPushButton(self.groupBox)
         self.pushButton_face_reco.setGeometry(QtCore.QRect(50, 60, 120, 40))
         font = QtGui.QFont()

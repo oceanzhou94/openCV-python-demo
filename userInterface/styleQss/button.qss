@@ -1,15 +1,43 @@
 QPushButton {
-            background-color: #4CAF50;
-            color: white;
-            font-size: 18px;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
+        background-color: #4CAF50;
+        color: white;
+        font-size: 18px;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
 
-        QPushButton:hover {
-            background-color: #45a049;
-        }
+    QPushButton:hover {
+        background-color: #45a049;
+    }
 
-        QPushButton:pressed {
-            background-color: #39803F;
-        }
+    QPushButton:pressed {
+        background-color: #39803F;
+    }
+
+    QWidget#centralwidget {
+        background-color: white;
+    }
+
+    QGroupBox {
+        background-color: white;
+        border: 2px solid gray;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    QLabel {
+        background-color: white;
+    }
+
+    QSlider::groove:horizontal {
+        background-color: #4CAF50;  /* 青绿色背景 */
+        height: 6px;
+        margin: 2px 0;
+    }
+
+    QSlider::handle:horizontal {
+        background-color: #00CED1;  /* 青绿色滑块 */
+        width: 20px;  /* 设置滑块大小 */
+        margin: -8px 0;  /* 调整滑块位置居中 */
+        border-radius: 10px;  /* 设置滑块为圆形 */
+    }
