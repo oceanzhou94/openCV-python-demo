@@ -151,164 +151,194 @@ class SubWindow(QMainWindow):
 
     # 单目标匹配中的方差匹配
     def signal_match_s1(self):
-        # 复制一种原图像
-        img = self.cv_srcImage.copy()
-        # 转换为单通道灰度图像
-        src_gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY, dstCn=1)
-        # 转换为单通道灰度图像
-        temp_gray = cv2.cvtColor(self.cv_tmpImage, cv2.COLOR_BGR2GRAY, dstCn=1)
-        # 获得模板图像的高度和宽度
-        temp_h, temp_w = temp_gray.shape
-        # 执行匹配操作，cv2.TM_SQDIFF：以方差结果为依据进行匹配。完全匹配时结果为0，否则为一个很大的值。
-        res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_SQDIFF_NORMED)
-        # 返回最值和位置
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        # 最小值为最佳匹配，获得其位置
-        top_left = min_loc
-        # 获得匹配范围的右下角位置
-        bottom_right = (top_left[0] + temp_w, top_left[1] + temp_h)
-        # 绘制匹配范围,蓝色边框
-        self.cv_dealtImage = cv2.rectangle(img, top_left, bottom_right, (255, 0, 0), 2)
-        # 显示匹配结果
-        self.show_in_dealt_label()
-        # 显示结果数组
-        text = "匹配结果数组：\n" + str(res)
-        self.ui.label_result.setText(text)
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_tmpImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制一种原图像
+            img = self.cv_srcImage.copy()
+            # 转换为单通道灰度图像
+            src_gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY, dstCn=1)
+            # 转换为单通道灰度图像
+            temp_gray = cv2.cvtColor(self.cv_tmpImage, cv2.COLOR_BGR2GRAY, dstCn=1)
+            # 获得模板图像的高度和宽度
+            temp_h, temp_w = temp_gray.shape
+            # 执行匹配操作，cv2.TM_SQDIFF：以方差结果为依据进行匹配。完全匹配时结果为0，否则为一个很大的值。
+            res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_SQDIFF_NORMED)
+            # 返回最值和位置
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+            # 最小值为最佳匹配，获得其位置
+            top_left = min_loc
+            # 获得匹配范围的右下角位置
+            bottom_right = (top_left[0] + temp_w, top_left[1] + temp_h)
+            # 绘制匹配范围,蓝色边框
+            self.cv_dealtImage = cv2.rectangle(img, top_left, bottom_right, (255, 0, 0), 2)
+            # 显示匹配结果
+            self.show_in_dealt_label()
+            # 显示结果数组
+            text = "匹配结果数组：\n" + str(res)
+            self.ui.label_result.setText(text)
 
     # 单目标匹配中的相关匹配
     def signal_match_s2(self):
-        # 复制一种原图像
-        img = self.cv_srcImage.copy()
-        # 转换为单通道灰度图像
-        src_gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY, dstCn=1)
-        # 转换为单通道灰度图像
-        temp_gray = cv2.cvtColor(self.cv_tmpImage, cv2.COLOR_BGR2GRAY, dstCn=1)
-        # 获得模板图像的高度和宽度
-        temp_h, temp_w = temp_gray.shape
-        # 执行匹配操作，cv2.TM_CCORR：相关匹配，将输入图像与模板图像相乘，乘积越大匹配度越高，乘积为0时匹配度最低。
-        res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_CCORR_NORMED)
-        # 返回最值和位置
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        # 最大值为最佳匹配，获得其位置
-        top_left = max_loc
-        # 获得匹配范围的右下角位置
-        bottom_right = (top_left[0] + temp_w, top_left[1] + temp_h)
-        # 绘制匹配范围,绿色边框
-        self.cv_dealtImage = cv2.rectangle(img, top_left, bottom_right, (0, 255, 0), 2)
-        # 显示匹配结果
-        self.show_in_dealt_label()
-        # 显示结果数组
-        text = "匹配结果数组：\n" + str(res)
-        self.ui.label_result.setText(text)
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_tmpImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制一种原图像
+            img = self.cv_srcImage.copy()
+            # 转换为单通道灰度图像
+            src_gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY, dstCn=1)
+            # 转换为单通道灰度图像
+            temp_gray = cv2.cvtColor(self.cv_tmpImage, cv2.COLOR_BGR2GRAY, dstCn=1)
+            # 获得模板图像的高度和宽度
+            temp_h, temp_w = temp_gray.shape
+            # 执行匹配操作，cv2.TM_CCORR：相关匹配，将输入图像与模板图像相乘，乘积越大匹配度越高，乘积为0时匹配度最低。
+            res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_CCORR_NORMED)
+            # 返回最值和位置
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+            # 最大值为最佳匹配，获得其位置
+            top_left = max_loc
+            # 获得匹配范围的右下角位置
+            bottom_right = (top_left[0] + temp_w, top_left[1] + temp_h)
+            # 绘制匹配范围,绿色边框
+            self.cv_dealtImage = cv2.rectangle(img, top_left, bottom_right, (0, 255, 0), 2)
+            # 显示匹配结果
+            self.show_in_dealt_label()
+            # 显示结果数组
+            text = "匹配结果数组：\n" + str(res)
+            self.ui.label_result.setText(text)
 
     # 单目标匹配中的相关系数匹配
     def signal_match_s3(self):
-        # 复制一种原图像
-        img = self.cv_srcImage.copy()
-        # 转换为单通道灰度图像
-        src_gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY, dstCn=1)
-        # 转换为单通道灰度图像
-        temp_gray = cv2.cvtColor(self.cv_tmpImage, cv2.COLOR_BGR2GRAY, dstCn=1)
-        # 获得模板图像的高度和宽度
-        temp_h, temp_w = temp_gray.shape
-        # 执行匹配操作，cv2.TM_CCOEFF：相关系数匹配
-        res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_CCOEFF_NORMED)
-        # 返回最值和位置
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        # 最小值为最佳匹配，获得其位置
-        top_left = max_loc
-        # 获得匹配范围的右下角位置
-        bottom_right = (top_left[0] + temp_w, top_left[1] + temp_h)
-        # 绘制匹配范围,红色边框
-        self.cv_dealtImage = cv2.rectangle(img, top_left, bottom_right, (0, 0, 255), 2)
-        # 显示匹配结果
-        self.show_in_dealt_label()
-        # 显示结果数组
-        text = "匹配结果数组：\n" + str(res)
-        self.ui.label_result.setText(text)
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_tmpImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制一种原图像
+            img = self.cv_srcImage.copy()
+            # 转换为单通道灰度图像
+            src_gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY, dstCn=1)
+            # 转换为单通道灰度图像
+            temp_gray = cv2.cvtColor(self.cv_tmpImage, cv2.COLOR_BGR2GRAY, dstCn=1)
+            # 获得模板图像的高度和宽度
+            temp_h, temp_w = temp_gray.shape
+            # 执行匹配操作，cv2.TM_CCOEFF：相关系数匹配
+            res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_CCOEFF_NORMED)
+            # 返回最值和位置
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+            # 最小值为最佳匹配，获得其位置
+            top_left = max_loc
+            # 获得匹配范围的右下角位置
+            bottom_right = (top_left[0] + temp_w, top_left[1] + temp_h)
+            # 绘制匹配范围,红色边框
+            self.cv_dealtImage = cv2.rectangle(img, top_left, bottom_right, (0, 0, 255), 2)
+            # 显示匹配结果
+            self.show_in_dealt_label()
+            # 显示结果数组
+            text = "匹配结果数组：\n" + str(res)
+            self.ui.label_result.setText(text)
 
     # 多目标匹配中的标准方差匹配
     def many_match_m1(self):
-        # 复制一种原图像
-        img = self.cv_srcImage.copy()
-        # 转换为单通道灰度图像
-        src_gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY, dstCn=1)
-        # 转换为单通道灰度图像
-        temp_gray = cv2.cvtColor(self.cv_tmpImage, cv2.COLOR_BGR2GRAY, dstCn=1)
-        # 获得模板图像的高度和宽度
-        temp_h, temp_w = temp_gray.shape
-        # 获得员图像的高度和宽度
-        src_h, src_w = src_gray.shape
-        # 执行匹配操作，cv2.TM_SQDIFF_NORMED：标准（归一化）方差匹配。
-        res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_SQDIFF_NORMED)
-        # 用于保存符合条件的匹配位置
-        mloc = []
-        # 设置匹配度阈值
-        threshold = 0.24
-        for i in range(src_h - temp_h):
-            for j in range(src_w - temp_w):
-                if res[i][j] <= threshold:  # 保存小于阈值的匹配位置
-                    mloc.append((j, i))
-        for pt in mloc:
-            # 标准匹配位置，蓝色矩形
-            cv2.rectangle(img, pt, (pt[0] + temp_w, pt[1] + temp_h), (255, 0, 0), 2)
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_tmpImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制一种原图像
+            img = self.cv_srcImage.copy()
+            # 转换为单通道灰度图像
+            src_gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY, dstCn=1)
+            # 转换为单通道灰度图像
+            temp_gray = cv2.cvtColor(self.cv_tmpImage, cv2.COLOR_BGR2GRAY, dstCn=1)
+            # 获得模板图像的高度和宽度
+            temp_h, temp_w = temp_gray.shape
+            # 获得员图像的高度和宽度
+            src_h, src_w = src_gray.shape
+            # 执行匹配操作，cv2.TM_SQDIFF_NORMED：标准（归一化）方差匹配。
+            res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_SQDIFF_NORMED)
+            # 用于保存符合条件的匹配位置
+            mloc = []
+            # 设置匹配度阈值
+            threshold = 0.24
+            for i in range(src_h - temp_h):
+                for j in range(src_w - temp_w):
+                    if res[i][j] <= threshold:  # 保存小于阈值的匹配位置
+                        mloc.append((j, i))
+            for pt in mloc:
+                # 标准匹配位置，蓝色矩形
+                cv2.rectangle(img, pt, (pt[0] + temp_w, pt[1] + temp_h), (255, 0, 0), 2)
 
-        # 画完线的图像赋值给显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+            # 画完线的图像赋值给显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
 
-        # 显示结果数组
-        text = "匹配结果数组：\n" + str(res)
-        self.ui.label_result.setText(text)
+            # 显示结果数组
+            text = "匹配结果数组：\n" + str(res)
+            self.ui.label_result.setText(text)
 
     # 多目标匹配中的标准相关匹配
     def many_match_m2(self):
-        # 复制一种原图像
-        img = self.cv_srcImage.copy()
-        # 图像复制
-        src_gray = self.cv_srcImage.copy()
-        temp_gray = self.cv_tmpImage.copy()
-        # 获得模板图像的高度和宽度
-        temp_h, temp_w, chanel = temp_gray.shape
-        # 执行匹配操作，cv2.TM_CCORR_NORMED：标准（归一化）相关匹配。
-        res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_CCORR_NORMED)
-        # 设置匹配阈值，过滤掉低匹配值的结果
-        threshold = 0.9
-        loc = np.where(res >= threshold)
-        # 框出匹配模板的位置
-        for pt in zip(*loc[::-1]):
-            cv2.rectangle(img, pt, (pt[0] + temp_w, pt[1] + temp_h), (0, 255, 0), 2)
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_tmpImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制一种原图像
+            img = self.cv_srcImage.copy()
+            # 图像复制
+            src_gray = self.cv_srcImage.copy()
+            temp_gray = self.cv_tmpImage.copy()
+            # 获得模板图像的高度和宽度
+            temp_h, temp_w, chanel = temp_gray.shape
+            # 执行匹配操作，cv2.TM_CCORR_NORMED：标准（归一化）相关匹配。
+            res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_CCORR_NORMED)
+            # 设置匹配阈值，过滤掉低匹配值的结果
+            threshold = 0.9
+            loc = np.where(res >= threshold)
+            # 框出匹配模板的位置
+            for pt in zip(*loc[::-1]):
+                cv2.rectangle(img, pt, (pt[0] + temp_w, pt[1] + temp_h), (0, 255, 0), 2)
 
-        # 画完线的图像赋值给显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+            # 画完线的图像赋值给显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
 
-        # 显示结果数组
-        text = "匹配结果数组：\n" + str(res)
-        self.ui.label_result.setText(text)
+            # 显示结果数组
+            text = "匹配结果数组：\n" + str(res)
+            self.ui.label_result.setText(text)
 
     # 多目标匹配中的标准相关系数匹配
     def many_match_m3(self):
-        # 复制一种原图像
-        img = self.cv_srcImage.copy()
-        # 图像复制
-        src_gray = self.cv_srcImage.copy()
-        temp_gray = self.cv_tmpImage.copy()
-        # 获得模板图像的高度和宽度
-        temp_h, temp_w, chanel = temp_gray.shape
-        # 执行匹配操作，cv2.TM_CCORR_NORMED：标准（归一化）相关匹配。
-        res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_CCOEFF_NORMED)
-        # 设置匹配阈值，过滤掉低匹配值的结果
-        threshold = 0.65
-        loc = np.where(res >= threshold)
-        # 框出匹配模板的位置
-        for pt in zip(*loc[::-1]):
-            cv2.rectangle(img, pt, (pt[0] + temp_w, pt[1] + temp_h), (0, 0, 255), 2)
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_tmpImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制一种原图像
+            img = self.cv_srcImage.copy()
+            # 图像复制
+            src_gray = self.cv_srcImage.copy()
+            temp_gray = self.cv_tmpImage.copy()
+            # 获得模板图像的高度和宽度
+            temp_h, temp_w, chanel = temp_gray.shape
+            # 执行匹配操作，cv2.TM_CCORR_NORMED：标准（归一化）相关匹配。
+            res = cv2.matchTemplate(src_gray, temp_gray, cv2.TM_CCOEFF_NORMED)
+            # 设置匹配阈值，过滤掉低匹配值的结果
+            threshold = 0.65
+            loc = np.where(res >= threshold)
+            # 框出匹配模板的位置
+            for pt in zip(*loc[::-1]):
+                cv2.rectangle(img, pt, (pt[0] + temp_w, pt[1] + temp_h), (0, 0, 255), 2)
 
-        # 画完线的图像赋值给显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+            # 画完线的图像赋值给显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
 
-        # 显示结果数组
-        text = "匹配结果数组：\n" + str(res)
-        self.ui.label_result.setText(text)
+            # 显示结果数组
+            text = "匹配结果数组：\n" + str(res)
+            self.ui.label_result.setText(text)

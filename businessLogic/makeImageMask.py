@@ -129,50 +129,58 @@ class SubWindow(QMainWindow):
 
     # 创建默认掩膜
     def make_default_mask(self):
-        # 获取原图像的高度，宽度，通道数
-        hight, width, channle = self.cv_srcImage.shape
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 获取原图像的高度，宽度，通道数
+            hight, width, channle = self.cv_srcImage.shape
 
-        # 用numpy生成一个全为0的，跟原图一样大小的的二维数组
-        mask = np.zeros((hight, width, channle), dtype=np.uint8)
-        # 确定原图的中心点
-        center_h = int(hight / 2)
-        center_w = int(width / 2)
-        # 确定移动距离，
-        distance_h = int(hight / 4)
-        distance_w = int(width / 4)
-        # 确定掩膜的尺寸
-        mask[center_h - distance_h:center_h + distance_h, center_w - distance_w:center_w + distance_w] = 255
-
-        # 与原图像进行与运算
-        self.cv_dealtImage = cv2.bitwise_and(self.cv_srcImage, mask)
-
-        # 显示掩膜后的图像
-        self.show_in_dealt_label()
+            # 用numpy生成一个全为0的，跟原图一样大小的的二维数组
+            mask = np.zeros((hight, width, channle), dtype=np.uint8)
+            # 确定原图的中心点
+            center_h = int(hight / 2)
+            center_w = int(width / 2)
+            # 确定移动距离，
+            distance_h = int(hight / 4)
+            distance_w = int(width / 4)
+            # 确定掩膜的尺寸
+            mask[center_h - distance_h:center_h + distance_h, center_w - distance_w:center_w + distance_w] = 255
+            # 与原图像进行与运算
+            self.cv_dealtImage = cv2.bitwise_and(self.cv_srcImage, mask)
+            # 显示掩膜后的图像
+            self.show_in_dealt_label()
 
     def make_user_mask(self):
-        # 获取原图像的高度，宽度，通道数
-        hight, width, channle = self.cv_srcImage.shape
-
-        # 用numpy生成一个全为0的，跟原图一样大小的的二维数组
-        mask = np.zeros((hight, width, channle), dtype=np.uint8)
-        try:
-            # 获取用户设定的相关数据
-            user_width = int(int(self.ui.lineEdit_width.text()) / 2)  # 宽度
-            user_hight = int(int(self.ui.lineEdit_hight.text()) / 2)  # 高度
-            user_x = int(self.ui.lineEdit_X.text())  # X轴坐标
-            user_y = int(self.ui.lineEdit_Y.text())  # Y轴坐标
-
-        except Exception as error:
-            # 消息弹出错误
-            QMessageBox.critical(self, '错误！', "创建掩膜失败，请检查数据！", QMessageBox.Close)
-            print("保存失败，错误：", error)
-
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
         else:
-            # 确定掩膜的尺寸
-            mask[user_y - user_hight:user_y + user_hight, user_x - user_width:user_x + user_width] = 255
+            # 获取原图像的高度，宽度，通道数
+            hight, width, channle = self.cv_srcImage.shape
 
-        # 与原图像进行与运算
-        self.cv_dealtImage = cv2.bitwise_and(self.cv_srcImage, mask)
+            # 用numpy生成一个全为0的，跟原图一样大小的的二维数组
+            mask = np.zeros((hight, width, channle), dtype=np.uint8)
+            try:
+                # 获取用户设定的相关数据
+                user_width = int(int(self.ui.lineEdit_width.text()) / 2)  # 宽度
+                user_hight = int(int(self.ui.lineEdit_hight.text()) / 2)  # 高度
+                user_x = int(self.ui.lineEdit_X.text())  # X轴坐标
+                user_y = int(self.ui.lineEdit_Y.text())  # Y轴坐标
 
-        # 显示掩膜后的图像
-        self.show_in_dealt_label()
+            except Exception as error:
+                # 消息弹出错误
+                QMessageBox.critical(self, '错误！', "创建掩膜失败，请检查数据！", QMessageBox.Close)
+                print("保存失败，错误：", error)
+
+            else:
+                # 确定掩膜的尺寸
+                mask[user_y - user_hight:user_y + user_hight, user_x - user_width:user_x + user_width] = 255
+
+            # 与原图像进行与运算
+            self.cv_dealtImage = cv2.bitwise_and(self.cv_srcImage, mask)
+
+            # 显示掩膜后的图像
+            self.show_in_dealt_label()

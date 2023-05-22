@@ -155,86 +155,101 @@ class SubWindow(QMainWindow):
 
     # match暴力匹配
     def violent_match(self):
-        # 复制原图像
-        img1 = self.cv_selectImage.copy()  # 查询图像
-        img2 = self.cv_srcImage.copy()  # 训练图像
-        # 转换为灰度图像
-        img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-        img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-        # 创建ORB检测器
-        orb = cv2.ORB_create()
-        # 检测关键点和计算描述符
-        kp1, des1 = orb.detectAndCompute(img1, None)
-        kp2, des2 = orb.detectAndCompute(img2, None)
-        # 创建匹配器
-        bf = cv2.BFMatcher_create(cv2.NORM_HAMMING, crossCheck=False)
-        # 执行特征匹配
-        ms = bf.match(des1, des2)
-        # 按距离排序
-        ms = sorted(ms, key=lambda x: x.distance)
-        # 绘制前20个匹配结果
-        img = cv2.drawMatches(img1, kp1, img2, kp2, ms[:20], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-        # 显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_selectImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img1 = self.cv_selectImage.copy()  # 查询图像
+            img2 = self.cv_srcImage.copy()  # 训练图像
+            # 转换为灰度图像
+            img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+            img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+            # 创建ORB检测器
+            orb = cv2.ORB_create()
+            # 检测关键点和计算描述符
+            kp1, des1 = orb.detectAndCompute(img1, None)
+            kp2, des2 = orb.detectAndCompute(img2, None)
+            # 创建匹配器
+            bf = cv2.BFMatcher_create(cv2.NORM_HAMMING, crossCheck=False)
+            # 执行特征匹配
+            ms = bf.match(des1, des2)
+            # 按距离排序
+            ms = sorted(ms, key=lambda x: x.distance)
+            # 绘制前20个匹配结果
+            img = cv2.drawMatches(img1, kp1, img2, kp2, ms[:20], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+            # 显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
 
     # knn暴力匹配
     def violent_knn_match(self):
-        # 复制原图像
-        img1 = self.cv_selectImage.copy()  # 查询图像
-        img2 = self.cv_srcImage.copy()  # 训练图像
-        # 转换为灰度图像
-        img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-        img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-        # 创建ORB检测器
-        orb = cv2.ORB_create()
-        # 检测关键点和计算描述符
-        kp1, des1 = orb.detectAndCompute(img1, None)
-        kp2, des2 = orb.detectAndCompute(img2, None)
-        # 创建匹配器
-        bf = cv2.BFMatcher_create(cv2.NORM_HAMMING, crossCheck=False)
-        # 执行特征匹配
-        ms = bf.knnMatch(des1, des2, k=2)
-        # 应用比例测试选择要使用的匹配结果
-        good = []
-        for m, n in ms:
-            if m.distance < 0.75 * n.distance:  # 因为k=2，所以这里比较两个匹配结果的距离
-                good.append(m)
-        # 绘制前20个匹配结果
-        img = cv2.drawMatches(img1, kp1, img2, kp2, good[:20], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-        # 显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_selectImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img1 = self.cv_selectImage.copy()  # 查询图像
+            img2 = self.cv_srcImage.copy()  # 训练图像
+            # 转换为灰度图像
+            img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+            img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+            # 创建ORB检测器
+            orb = cv2.ORB_create()
+            # 检测关键点和计算描述符
+            kp1, des1 = orb.detectAndCompute(img1, None)
+            kp2, des2 = orb.detectAndCompute(img2, None)
+            # 创建匹配器
+            bf = cv2.BFMatcher_create(cv2.NORM_HAMMING, crossCheck=False)
+            # 执行特征匹配
+            ms = bf.knnMatch(des1, des2, k=2)
+            # 应用比例测试选择要使用的匹配结果
+            good = []
+            for m, n in ms:
+                if m.distance < 0.75 * n.distance:  # 因为k=2，所以这里比较两个匹配结果的距离
+                    good.append(m)
+            # 绘制前20个匹配结果
+            img = cv2.drawMatches(img1, kp1, img2, kp2, good[:20], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+            # 显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
 
     # FLANN匹配
     def flann_match(self):
-        # 复制原图像
-        img1 = self.cv_selectImage.copy()  # 查询图像
-        img2 = self.cv_srcImage.copy()  # 训练图像
-        # 转换为灰度图像
-        img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-        img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-        # 创建ORB检测器
-        orb = cv2.ORB_create()
-        # 检测关键点和计算描述符
-        kp1, des1 = orb.detectAndCompute(img1, None)
-        kp2, des2 = orb.detectAndCompute(img2, None)
-        # 定义FLANN参数
-        flann_index_lsh = 6
-        index_params = dict(algorithm=flann_index_lsh,
-                            table_number=6,
-                            key_size=12,
-                            multi_probe_level=1)
-        search_params = dict(checks=50)
-        # 创建FLANN匹配器
-        flann = cv2.FlannBasedMatcher(index_params, search_params)
-        # 执行匹配操作
-        matches = flann.match(des1, des2)
-        # 关键点和连接线为绿色，单个点为红色
-        draw_params = dict(matchColor=(0, 255, 0), singlePointColor=(255, 0, 0), matchesMask=None,
-                           flags=cv2.DrawMatchesFlags_DEFAULT)
-        # 绘制匹配结果
-        img = cv2.drawMatches(img1, kp1, img2, kp2, matches[:20], None, **draw_params)
-        # 显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_selectImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img1 = self.cv_selectImage.copy()  # 查询图像
+            img2 = self.cv_srcImage.copy()  # 训练图像
+            # 转换为灰度图像
+            img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+            img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+            # 创建ORB检测器
+            orb = cv2.ORB_create()
+            # 检测关键点和计算描述符
+            kp1, des1 = orb.detectAndCompute(img1, None)
+            kp2, des2 = orb.detectAndCompute(img2, None)
+            # 定义FLANN参数
+            flann_index_lsh = 6
+            index_params = dict(algorithm=flann_index_lsh,
+                                table_number=6,
+                                key_size=12,
+                                multi_probe_level=1)
+            search_params = dict(checks=50)
+            # 创建FLANN匹配器
+            flann = cv2.FlannBasedMatcher(index_params, search_params)
+            # 执行匹配操作
+            matches = flann.match(des1, des2)
+            # 关键点和连接线为绿色，单个点为红色
+            draw_params = dict(matchColor=(0, 255, 0), singlePointColor=(255, 0, 0), matchesMask=None,
+                               flags=cv2.DrawMatchesFlags_DEFAULT)
+            # 绘制匹配结果
+            img = cv2.drawMatches(img1, kp1, img2, kp2, matches[:20], None, **draw_params)
+            # 显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()

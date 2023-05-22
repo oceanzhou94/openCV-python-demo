@@ -6,36 +6,36 @@ QPushButton {
         border-radius: 5px;
     }
 
-    QPushButton:hover {
+QPushButton:hover {
         background-color: #45a049;
     }
 
-    QPushButton:pressed {
+QPushButton:pressed {
         background-color: #39803F;
     }
 
-    QWidget#centralwidget {
+QWidget#centralwidget {
         background-color: white;
     }
 
-    QGroupBox {
+QGroupBox {
         background-color: white;
         border: 2px solid gray;
         padding: 10px;
         border-radius: 10px;
     }
 
-    QLabel {
+QLabel {
         background-color: white;
     }
 
-    QSlider::groove:horizontal {
+QSlider::groove:horizontal {
         background-color: #4CAF50;  /* 青绿色背景 */
         height: 6px;
         margin: 2px 0;
     }
 
-    QSlider::handle:horizontal {
+QSlider::handle:horizontal {
         background-color: #00CED1;  /* 青绿色滑块 */
         width: 20px;  /* 设置滑块大小 */
         margin: -8px 0;  /* 调整滑块位置居中 */

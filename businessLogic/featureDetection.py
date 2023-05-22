@@ -116,149 +116,179 @@ class SubWindow(QMainWindow):
 
     # 哈里斯角检测器
     def corner_harris(self):
-        # 复制图像
-        img = self.cv_srcImage.copy()
-        # 转换为灰度图像
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # 转换为浮点类型
-        gray = np.float32(gray)
-        # 执行角检测
-        dst = cv2.cornerHarris(gray, 10, 5, 0.001)
-        # 将角设置为红色
-        img[dst > 0.02 * dst.max()] = [0, 0, 255]
-        # 显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
-        # 结果显示归位
-        self.ui.label_result.setText("结果显示")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制图像
+            img = self.cv_srcImage.copy()
+            # 转换为灰度图像
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            # 转换为浮点类型
+            gray = np.float32(gray)
+            # 执行角检测
+            dst = cv2.cornerHarris(gray, 10, 5, 0.001)
+            # 将角设置为红色
+            img[dst > 0.02 * dst.max()] = [0, 0, 255]
+            # 显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
+            # 结果显示归位
+            self.ui.label_result.setText("结果显示")
 
     # 优化哈里斯角检测
     def corner_subpix(self):
-        # 复制图像
-        img = self.cv_srcImage.copy()
-        # 转换为灰度图像
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # 转换为浮点类型
-        gray = np.float32(gray)
-        # 查找哈里斯角
-        dst = cv2.cornerHarris(gray, 8, 7, 0.04)
-        # 二值化阈值处理
-        r, dst = cv2.threshold(dst, 0.01 * dst.max(), 255, 0)
-        # 转换为整型
-        dst = np.uint8(dst)
-        # 查找质点坐标
-        r, l, s, cxys = cv2.connectedComponentsWithStats(dst)
-        # 定义优化查找条件
-        cif = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
-        # 执行优化查找
-        corners = cv2.cornerSubPix(gray, np.float32(cxys), (5, 5), (-1, -1), cif)
-        # 堆叠构造新数组，便于标注角
-        res = np.hstack((cxys, corners))
-        # 转换为整型
-        res = np.int0(res)
-        # 将哈里斯角对应像素设置为红色
-        img[res[:, 1], res[:, 0]] = [0, 0, 255]
-        # 将优化结果像素设置为绿色
-        img[res[:, 3], res[:, 2]] = [0, 255, 0]
-        # 转换为RGB格式
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # 显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
-        # 结果显示归位
-        self.ui.label_result.setText("结果显示")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制图像
+            img = self.cv_srcImage.copy()
+            # 转换为灰度图像
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            # 转换为浮点类型
+            gray = np.float32(gray)
+            # 查找哈里斯角
+            dst = cv2.cornerHarris(gray, 8, 7, 0.04)
+            # 二值化阈值处理
+            r, dst = cv2.threshold(dst, 0.01 * dst.max(), 255, 0)
+            # 转换为整型
+            dst = np.uint8(dst)
+            # 查找质点坐标
+            r, l, s, cxys = cv2.connectedComponentsWithStats(dst)
+            # 定义优化查找条件
+            cif = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
+            # 执行优化查找
+            corners = cv2.cornerSubPix(gray, np.float32(cxys), (5, 5), (-1, -1), cif)
+            # 堆叠构造新数组，便于标注角
+            res = np.hstack((cxys, corners))
+            # 转换为整型
+            res = np.int0(res)
+            # 将哈里斯角对应像素设置为红色
+            img[res[:, 1], res[:, 0]] = [0, 0, 255]
+            # 将优化结果像素设置为绿色
+            img[res[:, 3], res[:, 2]] = [0, 255, 0]
+            # 转换为RGB格式
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            # 显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
+            # 结果显示归位
+            self.ui.label_result.setText("结果显示")
 
     # Shi-Tomasi角检测
     def good_features_to_track(self):
-        # 复制图像
-        img = self.cv_srcImage.copy()
-        # 转换为灰度图像
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # 转换为浮点类型
-        gray = np.float32(gray)
-        # 检测角，最多6个
-        corners = cv2.goodFeaturesToTrack(gray, 6, 0.1, 100)
-        # 转换为整型
-        corners = np.int0(corners)
-        for i in corners:
-            x, y = i.ravel()
-            cv2.circle(img, (x, y), 4, (0, 255, 0), -1)  # 用圆点标注找到的角，红色
-        # 转换为RGB格式
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # 显示图像
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
-        # 结果显示归位
-        self.ui.label_result.setText("结果显示")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制图像
+            img = self.cv_srcImage.copy()
+            # 转换为灰度图像
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            # 转换为浮点类型
+            gray = np.float32(gray)
+            # 检测角，最多6个
+            corners = cv2.goodFeaturesToTrack(gray, 6, 0.1, 100)
+            # 转换为整型
+            corners = np.int0(corners)
+            for i in corners:
+                x, y = i.ravel()
+                cv2.circle(img, (x, y), 4, (0, 255, 0), -1)  # 用圆点标注找到的角，红色
+            # 转换为RGB格式
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            # 显示图像
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
+            # 结果显示归位
+            self.ui.label_result.setText("结果显示")
 
     # FAST关键点检测
     def fast_detection(self):
-        # 复制图像
-        img = self.cv_srcImage.copy()
-        # 创建FAST检测器
-        fast = cv2.FastFeatureDetector_create()
-        # 设置阈值，默认阈值为10
-        fast.setThreshold(20)
-        # 检测关键点，不使用掩模
-        kp = fast.detect(img, None)
-        # 绘制关键点
-        img = cv2.drawKeypoints(img, kp, None, color=(0, 0, 255))
-        # 文字结果
-        n = 0
-        text = ""
-        for p in kp:
-            text += f"第{n + 1}个关键点，坐标：{p.pt}， 响应强度：{p.response}，邻域大小：{p.size}，角度： {p.angle}\n"
-            n += 1
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制图像
+            img = self.cv_srcImage.copy()
+            # 创建FAST检测器
+            fast = cv2.FastFeatureDetector_create()
+            # 设置阈值，默认阈值为10
+            fast.setThreshold(20)
+            # 检测关键点，不使用掩模
+            kp = fast.detect(img, None)
+            # 绘制关键点
+            img = cv2.drawKeypoints(img, kp, None, color=(0, 0, 255))
+            # 文字结果
+            n = 0
+            text = ""
+            for p in kp:
+                text += f"第{n + 1}个关键点，坐标：{p.pt}， 响应强度：{p.response}，邻域大小：{p.size}，角度： {p.angle}\n"
+                n += 1
 
-        # 显示结果
-        self.ui.label_result.setText(text)
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+            # 显示结果
+            self.ui.label_result.setText(text)
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
 
     # SIFT关键点检测
     def sift_detection(self):
-        # 复制图像
-        img = self.cv_srcImage.copy()
-        # 转换为灰度图像
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # 创建SIFT对象
-        sift = cv2.SIFT_create()
-        # 检测关键点
-        kp = sift.detect(gray, None)
-        # 绘制关键点
-        img = cv2.drawKeypoints(img, kp, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-        # 转换为RGB图像
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # 文字结果
-        n = 0
-        text = ""
-        for p in kp:
-            text += f"第{n + 1}个关键点，坐标：{p.pt}， 响应强度：{p.response}，邻域大小：{p.size}，角度： {p.angle}\n"
-            n += 1
-        # 显示图像
-        self.ui.label_result.setText(text)
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制图像
+            img = self.cv_srcImage.copy()
+            # 转换为灰度图像
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            # 创建SIFT对象
+            sift = cv2.SIFT_create()
+            # 检测关键点
+            kp = sift.detect(gray, None)
+            # 绘制关键点
+            img = cv2.drawKeypoints(img, kp, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+            # 转换为RGB图像
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            # 文字结果
+            n = 0
+            text = ""
+            for p in kp:
+                text += f"第{n + 1}个关键点，坐标：{p.pt}， 响应强度：{p.response}，邻域大小：{p.size}，角度： {p.angle}\n"
+                n += 1
+            # 显示图像
+            self.ui.label_result.setText(text)
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
 
     # ORB关键点检测
     def orb_detection(self):
-        # 复制图像
-        img = self.cv_srcImage.copy()
-        # 创建ORB检测器对象
-        orb = cv2.ORB_create()
-        # 检测关键点
-        kp = orb.detect(img, None)
-        # 绘制关键点
-        img = cv2.drawKeypoints(img, kp, None, color=(0, 0, 2550))
-        # 文字结果
-        n = 0
-        text = ""
-        for p in kp:
-            text += f"第{n + 1}个关键点，坐标：{p.pt}， 响应强度：{p.response}，邻域大小：{p.size}，角度： {p.angle}\n"
-            n += 1
-        # 显示绘制了特征点的图像
-        self.ui.label_result.setText(text)
-        self.cv_dealtImage = img
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制图像
+            img = self.cv_srcImage.copy()
+            # 创建ORB检测器对象
+            orb = cv2.ORB_create()
+            # 检测关键点
+            kp = orb.detect(img, None)
+            # 绘制关键点
+            img = cv2.drawKeypoints(img, kp, None, color=(0, 0, 2550))
+            # 文字结果
+            n = 0
+            text = ""
+            for p in kp:
+                text += f"第{n + 1}个关键点，坐标：{p.pt}， 响应强度：{p.response}，邻域大小：{p.size}，角度： {p.angle}\n"
+                n += 1
+            # 显示绘制了特征点的图像
+            self.ui.label_result.setText(text)
+            self.cv_dealtImage = img
+            self.show_in_dealt_label()
 
 

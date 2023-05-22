@@ -29,7 +29,7 @@ def main():
     splash.deleteLater()
 
     # 打开样式表
-    with open('userInterface/styleQss/button.qss', 'r', encoding='UTF-8') as style:
+    with open('./styleQss/button.qss', 'r', encoding='UTF-8') as style:
         qss_style = style.read()
     # 应用样式表
     app.setStyleSheet(qss_style)

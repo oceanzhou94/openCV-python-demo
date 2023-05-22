@@ -101,219 +101,216 @@ class SubWindow(QMainWindow):
 
     # 绘制直方图
     def draw_histogram(self):
-        # 复制原图像
-        img = self.cv_srcImage.copy()
-
-        # 每次绘制之前清空画布
-        plt.clf()
-
-        # 绘制直方图
-        plt.hist(img.ravel(), 256)
-
-        # 保存直方图
-        plt.savefig("./dataAccess/histogram/histogram_draw.png")
-
-        # 直方图类型转换成QPixmap
-        self.dst_img = QPixmap("./dataAccess/histogram/histogram_draw.png")
-
-        # 显示直方图
-        self.ui.label_dealt_img.setPixmap(self.dst_img)
-
-        # 删除图片
-        os.remove("./dataAccess/histogram/histogram_draw.png")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img = self.cv_srcImage.copy()
+            # 每次绘制之前清空画布
+            plt.clf()
+            # 绘制直方图
+            plt.hist(img.ravel(), 256)
+            # 保存直方图
+            plt.savefig("./dataAccess/histogram/histogram_draw.png")
+            # 直方图类型转换成QPixmap
+            self.dst_img = QPixmap("./dataAccess/histogram/histogram_draw.png")
+            # 显示直方图
+            self.ui.label_dealt_img.setPixmap(self.dst_img)
+            # 删除图片
+            os.remove("./dataAccess/histogram/histogram_draw.png")
 
     # 查找直方图
     def find_histogram(self):
-        # 复制原图像
-        img = self.cv_srcImage.copy()
-
-        # 每次绘制之前清空画布
-        plt.clf()
-
-        histb = cv2.calcHist([img], [0], None, [256], [0, 255])  # 计算B通道直方图
-        histg = cv2.calcHist([img], [1], None, [256], [0, 255])  # 计算G通道直方图
-        histr = cv2.calcHist([img], [2], None, [256], [0, 255])  # 计算R通道直方图
-        plt.plot(histb, color='b')  # 绘制B通道直方图，蓝色
-        plt.plot(histg, color='g')  # 绘制G通道直方图，绿色
-        plt.plot(histr, color='r')  # 绘制R通道直方图，红色
-
-        # 保存直方图
-        plt.savefig("./dataAccess/histogram/histogram_find.png")
-
-        # 直方图类型转换成QPixmap
-        self.dst_img = QPixmap("./dataAccess/histogram/histogram_find.png")
-
-        # 显示直方图
-        self.ui.label_dealt_img.setPixmap(self.dst_img)
-
-        # 删除图片
-        os.remove("./dataAccess/histogram/histogram_find.png")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img = self.cv_srcImage.copy()
+            # 每次绘制之前清空画布
+            plt.clf()
+            histb = cv2.calcHist([img], [0], None, [256], [0, 255])  # 计算B通道直方图
+            histg = cv2.calcHist([img], [1], None, [256], [0, 255])  # 计算G通道直方图
+            histr = cv2.calcHist([img], [2], None, [256], [0, 255])  # 计算R通道直方图
+            plt.plot(histb, color='b')  # 绘制B通道直方图，蓝色
+            plt.plot(histg, color='g')  # 绘制G通道直方图，绿色
+            plt.plot(histr, color='r')  # 绘制R通道直方图，红色
+            # 保存直方图
+            plt.savefig("./dataAccess/histogram/histogram_find.png")
+            # 直方图类型转换成QPixmap
+            self.dst_img = QPixmap("./dataAccess/histogram/histogram_find.png")
+            # 显示直方图
+            self.ui.label_dealt_img.setPixmap(self.dst_img)
+            # 删除图片
+            os.remove("./dataAccess/histogram/histogram_find.png")
 
     # 掩膜直方图
     def mask_histogram(self):
-        # 复制原图像
-        img = self.cv_srcImage.copy()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img = self.cv_srcImage.copy()
+            # 按原图大小创建一幅黑色图像
+            w, h, d = img.shape
+            mask = np.zeros((w, h), np.uint8)
 
-        # 按原图大小创建一幅黑色图像
-        w, h, d = img.shape
-        mask = np.zeros((w, h), np.uint8)
-
-        w1 = np.int0(w / 4)
-        w2 = np.int0(w * 0.75)
-        h1 = np.int0(h / 4)
-        h2 = np.int0(h * 0.75)
-
-        # 每次绘制之前清空画布
-        plt.clf()
-
-        mask[w1:w2, h1:h2] = 255  # 设置掩模白色区域
-        histb = cv2.calcHist([img], [0], mask, [256], [0, 255])  # 计算B通道直方图
-        histg = cv2.calcHist([img], [1], mask, [256], [0, 255])  # 计算G通道直方图
-        histr = cv2.calcHist([img], [2], mask, [256], [0, 255])  # 计算R通道直方图
-        plt.plot(histb, color='b')  # 绘制B通道直方图，蓝色
-        plt.plot(histg, color='g')  # 绘制G通道直方图，绿色
-        plt.plot(histr, color='r')  # 绘制R通道直方图，红色
-
-        # 保存直方图
-        plt.savefig("./dataAccess/histogram/histogram_mask.png")
-
-        # 直方图类型转换成QPixmap
-        self.dst_img = QPixmap("./dataAccess/histogram/histogram_mask.png")
-
-        # 显示直方图
-        self.ui.label_dealt_img.setPixmap(self.dst_img)
-
-        # 删除图片
-        os.remove("./dataAccess/histogram/histogram_mask.png")
+            w1 = np.int0(w / 4)
+            w2 = np.int0(w * 0.75)
+            h1 = np.int0(h / 4)
+            h2 = np.int0(h * 0.75)
+            # 每次绘制之前清空画布
+            plt.clf()
+            mask[w1:w2, h1:h2] = 255  # 设置掩模白色区域
+            histb = cv2.calcHist([img], [0], mask, [256], [0, 255])  # 计算B通道直方图
+            histg = cv2.calcHist([img], [1], mask, [256], [0, 255])  # 计算G通道直方图
+            histr = cv2.calcHist([img], [2], mask, [256], [0, 255])  # 计算R通道直方图
+            plt.plot(histb, color='b')  # 绘制B通道直方图，蓝色
+            plt.plot(histg, color='g')  # 绘制G通道直方图，绿色
+            plt.plot(histr, color='r')  # 绘制R通道直方图，红色
+            # 保存直方图
+            plt.savefig("./dataAccess/histogram/histogram_mask.png")
+            # 直方图类型转换成QPixmap
+            self.dst_img = QPixmap("./dataAccess/histogram/histogram_mask.png")
+            # 显示直方图
+            self.ui.label_dealt_img.setPixmap(self.dst_img)
+            # 删除图片
+            os.remove("./dataAccess/histogram/histogram_mask.png")
 
     # NumPy中的直方图
     def histogram_numpy(self):
-        # 复制原图像
-        img = self.cv_srcImage.copy()
-
-        # 每次绘制之前清空画布
-        plt.clf()
-
-        histb, e1 = np.histogram(img[0].ravel(), 256, [0, 256])  # 计算B通道直方图
-        histg, e2 = np.histogram(img[1].ravel(), 256, [0, 256])  # 计算G通道直方图
-        histr, e3 = np.histogram(img[2].ravel(), 256, [0, 256])  # 计算R通道直方图
-        plt.plot(histb, color='b')  # 绘制B通道直方图，蓝色
-        plt.plot(histg, color='g')  # 绘制G通道直方图，绿色
-        plt.plot(histr, color='r')  # 绘制R通道直方图，红色
-
-        # 保存直方图
-        plt.savefig("./dataAccess/histogram/histogram_numpy.png")
-
-        # 直方图类型转换成QPixmap
-        self.dst_img = QPixmap("./dataAccess/histogram/histogram_numpy.png")
-
-        # 显示直方图
-        self.ui.label_dealt_img.setPixmap(self.dst_img)
-
-        # 删除图片
-        os.remove("./dataAccess/histogram/histogram_numpy.png")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img = self.cv_srcImage.copy()
+            # 每次绘制之前清空画布
+            plt.clf()
+            histb, e1 = np.histogram(img[0].ravel(), 256, [0, 256])  # 计算B通道直方图
+            histg, e2 = np.histogram(img[1].ravel(), 256, [0, 256])  # 计算G通道直方图
+            histr, e3 = np.histogram(img[2].ravel(), 256, [0, 256])  # 计算R通道直方图
+            plt.plot(histb, color='b')  # 绘制B通道直方图，蓝色
+            plt.plot(histg, color='g')  # 绘制G通道直方图，绿色
+            plt.plot(histr, color='r')  # 绘制R通道直方图，红色
+            # 保存直方图
+            plt.savefig("./dataAccess/histogram/histogram_numpy.png")
+            # 直方图类型转换成QPixmap
+            self.dst_img = QPixmap("./dataAccess/histogram/histogram_numpy.png")
+            # 显示直方图
+            self.ui.label_dealt_img.setPixmap(self.dst_img)
+            # 删除图片
+            os.remove("./dataAccess/histogram/histogram_numpy.png")
 
     # 普通直方图均衡化
     def equalize_hist(self):
-        # 复制原图像
-        img = self.cv_srcImage.copy().ravel()
-
-        # 均衡化
-        img2 = cv2.equalizeHist(img)
-        # 每次绘制之前清空画布
-        plt.clf()
-        # 绘制均衡化后图像的直方图
-        plt.figure('均衡化后的直方图')
-        plt.hist(img2, 256)
-        # 保存直方图
-        plt.savefig("./dataAccess/histogram/histogram_equal.png")
-
-        # 直方图类型转换成QPixmap
-        self.dst_img = QPixmap("./dataAccess/histogram/histogram_equal.png")
-
-        # 显示直方图
-        self.ui.label_dealt_img.setPixmap(self.dst_img)
-
-        # 删除图片
-        os.remove("./dataAccess/histogram/histogram_equal.png")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img = self.cv_srcImage.copy().ravel()
+            # 均衡化
+            img2 = cv2.equalizeHist(img)
+            # 每次绘制之前清空画布
+            plt.clf()
+            # 绘制均衡化后图像的直方图
+            plt.figure('均衡化后的直方图')
+            plt.hist(img2, 256)
+            # 保存直方图
+            plt.savefig("./dataAccess/histogram/histogram_equal.png")
+            # 直方图类型转换成QPixmap
+            self.dst_img = QPixmap("./dataAccess/histogram/histogram_equal.png")
+            # 显示直方图
+            self.ui.label_dealt_img.setPixmap(self.dst_img)
+            # 删除图片
+            os.remove("./dataAccess/histogram/histogram_equal.png")
 
     # 限制对比度自适应直方图均衡化
     def create_clahe(self):
-        # 复制原图像
-        img = self.cv_srcImage.copy().ravel()
-        # 均衡化
-        img2 = cv2.equalizeHist(img)
-        # 创建CLAHE
-        clahe = cv2.createCLAHE(clipLimit=5)
-        # 应用CLAHE
-        img3 = clahe.apply(img2)
-
-        # 每次绘制之前清空画布
-        plt.clf()
-        # 绘制均衡化后图像的直方图
-        plt.figure('均衡化后的直方图')
-        plt.hist(img3, 256)
-
-        # 保存直方图
-        plt.savefig("./dataAccess/histogram/histogram_clahe.png")
-
-        # 直方图类型转换成QPixmap
-        self.dst_img = QPixmap("./dataAccess/histogram/histogram_clahe.png")
-
-        # 显示直方图
-        self.ui.label_dealt_img.setPixmap(self.dst_img)
-
-        # 删除图片
-        os.remove("./dataAccess/histogram/histogram_clahe.png")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img = self.cv_srcImage.copy().ravel()
+            # 均衡化
+            img2 = cv2.equalizeHist(img)
+            # 创建CLAHE
+            clahe = cv2.createCLAHE(clipLimit=5)
+            # 应用CLAHE
+            img3 = clahe.apply(img2)
+            # 每次绘制之前清空画布
+            plt.clf()
+            # 绘制均衡化后图像的直方图
+            plt.figure('均衡化后的直方图')
+            plt.hist(img3, 256)
+            # 保存直方图
+            plt.savefig("./dataAccess/histogram/histogram_clahe.png")
+            # 直方图类型转换成QPixmap
+            self.dst_img = QPixmap("./dataAccess/histogram/histogram_clahe.png")
+            # 显示直方图
+            self.ui.label_dealt_img.setPixmap(self.dst_img)
+            # 删除图片
+            os.remove("./dataAccess/histogram/histogram_clahe.png")
 
     # OpenCV中的二维直方图
     def calc_hist_opencv(self):
-        # 复制原图像
-        img = self.cv_srcImage.copy()
-        # 转换色彩空间为HSV
-        img2 = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        # 计算颜色直方图
-        hist = cv2.calcHist([img2], [0, 1], None, [180, 256], [0, 180, 0, 256])
-
-        # 每次绘制之前清空画布
-        plt.clf()
-        # 绘制颜色直方图
-        plt.imshow(hist, interpolation='nearest')
-        # 保存直方图
-        plt.savefig("./dataAccess/histogram/histogram_opencv.png")
-
-        # 直方图类型转换成QPixmap
-        self.dst_img = QPixmap("./dataAccess/histogram/histogram_opencv.png")
-
-        # 显示直方图
-        self.ui.label_dealt_img.setPixmap(self.dst_img)
-
-        # 删除图片
-        os.remove("./dataAccess/histogram/histogram_opencv.png")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img = self.cv_srcImage.copy()
+            # 转换色彩空间为HSV
+            img2 = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            # 计算颜色直方图
+            hist = cv2.calcHist([img2], [0, 1], None, [180, 256], [0, 180, 0, 256])
+            # 每次绘制之前清空画布
+            plt.clf()
+            # 绘制颜色直方图
+            plt.imshow(hist, interpolation='nearest')
+            # 保存直方图
+            plt.savefig("./dataAccess/histogram/histogram_opencv.png")
+            # 直方图类型转换成QPixmap
+            self.dst_img = QPixmap("./dataAccess/histogram/histogram_opencv.png")
+            # 显示直方图
+            self.ui.label_dealt_img.setPixmap(self.dst_img)
+            # 删除图片
+            os.remove("./dataAccess/histogram/histogram_opencv.png")
 
     # NumPy中的二维直方图
     def calc_hist_numpy(self):
-        # 复制原图像
-        img = self.cv_srcImage.copy()
-        # 转换色彩空间为HSV
-        img2 = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-        h, s, v = cv2.split(img2)
-        # 计算颜色直方图
-        hist, x, y = np.histogram2d(h.ravel(), s.ravel(), [180, 256], [[0, 180], [0, 256]])
-
-        # 每次绘制之前清空画布
-        plt.clf()
-        # 绘制颜色直方图
-        plt.imshow(hist, interpolation='nearest')
-        # 保存直方图
-        plt.savefig("./dataAccess/histogram/histogram_numpy.png")
-
-        # 直方图类型转换成QPixmap
-        self.dst_img = QPixmap("./dataAccess/histogram/histogram_numpy.png")
-
-        # 显示直方图
-        self.ui.label_dealt_img.setPixmap(self.dst_img)
-
-        # 删除图片
-        os.remove("./dataAccess/histogram/histogram_numpy.png")
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制原图像
+            img = self.cv_srcImage.copy()
+            # 转换色彩空间为HSV
+            img2 = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            h, s, v = cv2.split(img2)
+            # 计算颜色直方图
+            hist, x, y = np.histogram2d(h.ravel(), s.ravel(), [180, 256], [[0, 180], [0, 256]])
+            # 每次绘制之前清空画布
+            plt.clf()
+            # 绘制颜色直方图
+            plt.imshow(hist, interpolation='nearest')
+            # 保存直方图
+            plt.savefig("./dataAccess/histogram/histogram_numpy.png")
+            # 直方图类型转换成QPixmap
+            self.dst_img = QPixmap("./dataAccess/histogram/histogram_numpy.png")
+            # 显示直方图
+            self.ui.label_dealt_img.setPixmap(self.dst_img)
+            # 删除图片
+            os.remove("./dataAccess/histogram/histogram_numpy.png")

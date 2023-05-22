@@ -135,49 +135,68 @@ class SubWindow(QMainWindow):
 
     # 图片缩放函数
     def picture_scaling_ok(self):
-        # 从doubleSpinBox中获取缩放数值倍数
-        value = self.ui.doubleSpinBox.value()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 从doubleSpinBox中获取缩放数值倍数
+            value = self.ui.doubleSpinBox.value()
 
-        # 调整图片缩放大小
-        self.cv_dealtImage = cv2.resize(self.cv_srcImage, dsize=None, fx=value, fy=value)
+            # 调整图片缩放大小
+            self.cv_dealtImage = cv2.resize(self.cv_srcImage, dsize=None, fx=value, fy=value)
 
-        # 显示图像
-        self.show_in_dealt_label()
+            # 显示图像
+            self.show_in_dealt_label()
 
     # 取消缩放，图片恢复至默认大小
     def picture_scaling_recover(self):
-        # 恢复doubleSpinBox中的数值为1
-        self.ui.doubleSpinBox.setValue(1)
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 恢复doubleSpinBox中的数值为1
+            self.ui.doubleSpinBox.setValue(1)
 
-        # 调整图片缩放大小
-        self.cv_dealtImage = cv2.resize(self.cv_srcImage, dsize=None, fx=1, fy=1)
+            # 调整图片缩放大小
+            self.cv_dealtImage = cv2.resize(self.cv_srcImage, dsize=None, fx=1, fy=1)
 
-        # 显示图像
-        self.show_in_dealt_label()
+            # 显示图像
+            self.show_in_dealt_label()
 
     # 图像旋转逻辑
     def rotation_image_ok(self):
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 获取原图坐标
+            rows, cols = self.cv_srcImage.shape[0], self.cv_srcImage.shape[1]
 
-        # 获取原图坐标
-        rows, cols = self.cv_srcImage.shape[0], self.cv_srcImage.shape[1]
+            # 从滑动组件获取旋转角度
+            angle = self.ui.horizontalSlider.value()
 
-        # 从滑动组件获取旋转角度
-        angle = self.ui.horizontalSlider.value()
+            # 按图像中心点旋转，
+            center = cv2.getRotationMatrix2D(((cols - 1) / 2.0, (rows - 1) / 2.0), angle, 1)
+            self.cv_dealtImage = cv2.warpAffine(self.cv_srcImage, center, (cols, rows))
 
-        # 按图像中心点旋转，
-        center = cv2.getRotationMatrix2D(((cols - 1) / 2.0, (rows - 1) / 2.0), angle, 1)
-        self.cv_dealtImage = cv2.warpAffine(self.cv_srcImage, center, (cols, rows))
-
-        # 显示图像
-        self.show_in_dealt_label()
+            # 显示图像
+            self.show_in_dealt_label()
 
     # 图像旋转恢复
     def rotation_image_recover(self):
-        # 直接显示原图
-        self.cv_dealtImage = self.cv_srcImage.copy()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 直接显示原图
+            self.cv_dealtImage = self.cv_srcImage.copy()
 
-        # 显示图像
-        self.show_in_dealt_label()
+            # 显示图像
+            self.show_in_dealt_label()
 
     # 实时显示滑动控件的数值
     def slider_value_show(self):
@@ -186,30 +205,41 @@ class SubWindow(QMainWindow):
 
         # 强制类型转换，label框需要str类型值
         show_str = "旋转角度：" + str(value) + "°"
-
         # 显示数值
         self.ui.label_value_show.setText(show_str)
 
     # 图片水平镜像翻转
     def flip_horizontal_image(self):
-        # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，1表示水平翻转
-        self.cv_dealtImage = cv2.flip(self.cv_srcImage, 1)  # 水平翻转
-
-        # 显示图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，1表示水平翻转
+            self.cv_dealtImage = cv2.flip(self.cv_srcImage, 1)  # 水平翻转
+            # 显示图像
+            self.show_in_dealt_label()
 
     # 图片垂直镜像翻转
     def flip_vertical_image(self):
-        # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，0表示水平翻转
-        self.cv_dealtImage = cv2.flip(self.cv_srcImage, 0)  # 垂直翻转
-
-        # 显示图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，0表示水平翻转
+            self.cv_dealtImage = cv2.flip(self.cv_srcImage, 0)  # 垂直翻转
+            # 显示图像
+            self.show_in_dealt_label()
 
     # 图片对角镜像翻转--同时实现水平和垂直镜像
     def flip_diagonal_image(self):
-        # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，-1表示同时水平翻转和垂直翻转
-        self.cv_dealtImage = cv2.flip(self.cv_srcImage, -1)  # 对角翻转
-
-        # 显示图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # flip函数实现图片镜像翻转，参数1：cv读取后的图片，参数2：翻转设置，-1表示同时水平翻转和垂直翻转
+            self.cv_dealtImage = cv2.flip(self.cv_srcImage, -1)  # 对角翻转
+            # 显示图像
+            self.show_in_dealt_label()

@@ -130,250 +130,288 @@ class SubWindow(QMainWindow):
 
     # 查找轮廓并输出相应的数据
     def find_contour(self):
-        # 将其转换为灰度图像
-        gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY)
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 将其转换为灰度图像
+            gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY)
 
-        # 二值化阈值处理
-        ret, img2 = cv2.threshold(gray, 125, 255, cv2.THRESH_BINARY)
+            # 二值化阈值处理
+            ret, img2 = cv2.threshold(gray, 125, 255, cv2.THRESH_BINARY)
 
-        # 查找轮廓，返回值有3个，取后两个
-        self.contours = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]  # 轮廓
-        self.hierarchy = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[2]  # 层次
+            # 查找轮廓，返回值有3个，取后两个
+            self.contours = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]  # 轮廓
+            self.hierarchy = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[2]  # 层次
 
-        # 相关数据写入表格
-        item_type_contours = QTableWidgetItem(str(type(self.contours)))  # 轮廓类型
-        self.ui.tableWidget.setItem(0, 0, item_type_contours)
+            # 相关数据写入表格
+            item_type_contours = QTableWidgetItem(str(type(self.contours)))  # 轮廓类型
+            self.ui.tableWidget.setItem(0, 0, item_type_contours)
 
-        item_value_contours = QTableWidgetItem(str(len(self.contours)))  # 轮廓个数
-        self.ui.tableWidget.setItem(1, 0, item_value_contours)
+            item_value_contours = QTableWidgetItem(str(len(self.contours)))  # 轮廓个数
+            self.ui.tableWidget.setItem(1, 0, item_value_contours)
 
-        item_type_hierarchy = QTableWidgetItem(str(type(self.hierarchy)))  # 层次类型
-        self.ui.tableWidget.setItem(2, 0, item_type_hierarchy)
+            item_type_hierarchy = QTableWidgetItem(str(type(self.hierarchy)))  # 层次类型
+            self.ui.tableWidget.setItem(2, 0, item_type_hierarchy)
 
     # 绘制轮廓到label_dealt_img显示
     def draw_contour(self):
-        # 将其转换为灰度图像
-        gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY)
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 将其转换为灰度图像
+            gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY)
 
-        # 二值化阈值处理
-        ret, img2 = cv2.threshold(gray, 125, 255, cv2.THRESH_BINARY)
+            # 二值化阈值处理
+            ret, img2 = cv2.threshold(gray, 125, 255, cv2.THRESH_BINARY)
 
-        # 查找轮廓，返回值有3个，取后两个
-        self.contours = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]  # 轮廓
-        self.hierarchy = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[2]  # 层次
+            # 查找轮廓，返回值有3个，取后两个
+            self.contours = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[1]  # 轮廓
+            self.hierarchy = cv2.findContours(img2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[2]  # 层次
 
-        # 相关数据写入表格
-        item_type_contours = QTableWidgetItem(str(type(self.contours)))  # 轮廓类型
-        self.ui.tableWidget.setItem(0, 0, item_type_contours)
+            # 相关数据写入表格
+            item_type_contours = QTableWidgetItem(str(type(self.contours)))  # 轮廓类型
+            self.ui.tableWidget.setItem(0, 0, item_type_contours)
 
-        item_value_contours = QTableWidgetItem(str(len(self.contours)))  # 轮廓个数
-        self.ui.tableWidget.setItem(1, 0, item_value_contours)
+            item_value_contours = QTableWidgetItem(str(len(self.contours)))  # 轮廓个数
+            self.ui.tableWidget.setItem(1, 0, item_value_contours)
 
-        item_type_hierarchy = QTableWidgetItem(str(type(self.hierarchy)))  # 层次类型
-        self.ui.tableWidget.setItem(2, 0, item_type_hierarchy)
+            item_type_hierarchy = QTableWidgetItem(str(type(self.hierarchy)))  # 层次类型
+            self.ui.tableWidget.setItem(2, 0, item_type_hierarchy)
 
-        # 按原图大小创建一幅白色图像
-        self.white_image = np.zeros(self.cv_srcImage.shape, np.uint8) + 255
+            # 按原图大小创建一幅白色图像
+            self.white_image = np.zeros(self.cv_srcImage.shape, np.uint8) + 255
 
-        # 绘制轮廓,参数1：白色图像，参数二：轮廓，参数3：-1表示绘制所有轮廓，参数4：绘制颜色BGR，参数5：画笔粗细
-        self.cv_dealtImage = cv2.drawContours(self.white_image, self.contours, -1, (255, 0, 0), 2)
+            # 绘制轮廓,参数1：白色图像，参数二：轮廓，参数3：-1表示绘制所有轮廓，参数4：绘制颜色BGR，参数5：画笔粗细
+            self.cv_dealtImage = cv2.drawContours(self.white_image, self.contours, -1, (255, 0, 0), 2)
 
-        # 显示轮廓图像
-        self.show_in_dealt_label()
+            # 显示轮廓图像
+            self.show_in_dealt_label()
 
     # 输出轮廓的矩
     def get_moments(self):
-        # 先调用绘制轮廓
-        self.draw_contour()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓
+            self.draw_contour()
 
-        # 遍历所有轮廓
-        text = ""
-        for n in range(len(self.contours)):
-            # 得到每个轮廓的矩
-            m = cv2.moments(self.contours[n])
-            # 输出轮廓矩
-            # 在label中显示
-            text += f"轮廓{n}的矩：{m}\n"
-            self.ui.label_result.setText(text)
+            # 遍历所有轮廓
+            text = ""
+            for n in range(len(self.contours)):
+                # 得到每个轮廓的矩
+                m = cv2.moments(self.contours[n])
+                # 输出轮廓矩
+                # 在label中显示
+                text += f"轮廓{n}的矩：{m}\n"
+                self.ui.label_result.setText(text)
 
     # 输出轮廓的面积
     def get_areas(self):
-        # 先调用绘制轮廓
-        self.draw_contour()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓
+            self.draw_contour()
 
-        text = ""
-        # 遍历所有轮廓
-        for n in range(len(self.contours)):
-            # 计算轮廓面积
-            m = cv2.contourArea(self.contours[n])
-            text += f"轮廓{n}的面积：{m}\n"
+            text = ""
+            # 遍历所有轮廓
+            for n in range(len(self.contours)):
+                # 计算轮廓面积
+                m = cv2.contourArea(self.contours[n])
+                text += f"轮廓{n}的面积：{m}\n"
 
-        self.ui.label_result.setText(text)
+            self.ui.label_result.setText(text)
 
     # 输出轮廓的长度
     def get_length(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
 
-        text = ""
-        # 遍历所有轮廓
-        for n in range(len(self.contours)):
-            # 计算轮廓长度
-            m = cv2.arcLength(self.contours[n], True)
-            text += f"轮廓{n}的长度：{m}\n"
+            text = ""
+            # 遍历所有轮廓
+            for n in range(len(self.contours)):
+                # 计算轮廓长度
+                m = cv2.arcLength(self.contours[n], True)
+                text += f"轮廓{n}的长度：{m}\n"
 
-        self.ui.label_result.setText(text)
+            self.ui.label_result.setText(text)
 
     # 绘制轮廓的近似多边形
     def draw_approx_poly(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
-
-        # epsilon为精度，表示近似多边形接近轮廓的最大距离
-        epsilon = 0.1
-
-        # 计算轮廓长度
-        arcl = cv2.arcLength(self.contours[0], True)
-
-        eps = epsilon * arcl
-        self.cv_dealtImage = self.white_image.copy()
-        # 获得近似多边形，参数1：轮廓，参数2：精度，参数3：True表示轮廓是封闭的
-        app = cv2.approxPolyDP(self.contours[0], eps, True)
-
-        self.ui.label_result.setText("近似多边形：\n" + str(app))
-
-        # 绘制近似轮廓
-        self.cv_dealtImage = cv2.drawContours(self.cv_dealtImage, [app], -1, (0, 255, 0), 2)
-
-        # 显示轮廓图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
+            # epsilon为精度，表示近似多边形接近轮廓的最大距离
+            epsilon = 0.1
+            # 计算轮廓长度
+            arcl = cv2.arcLength(self.contours[0], True)
+            eps = epsilon * arcl
+            self.cv_dealtImage = self.white_image.copy()
+            # 获得近似多边形，参数1：轮廓，参数2：精度，参数3：True表示轮廓是封闭的
+            app = cv2.approxPolyDP(self.contours[0], eps, True)
+            self.ui.label_result.setText("近似多边形：\n" + str(app))
+            # 绘制近似轮廓
+            self.cv_dealtImage = cv2.drawContours(self.cv_dealtImage, [app], -1, (0, 255, 0), 2)
+            # 显示轮廓图像
+            self.show_in_dealt_label()
 
     # 绘制轮廓的凸包
     def convex_hull(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
-
-        # 计算凸包，返回值是一个numpy.ndarray对象，包含了凸包的关键点
-        # returnPoints为True（默认值）时，返回的hull中包含的是凸包关键点的坐标
-        hull_coord = cv2.convexHull(self.contours[0])
-
-        # returnPoints为False时，返回的是凸包关键点在轮廓中的索引。
-        hull_index = cv2.convexHull(self.contours[0], returnPoints=False)
-
-        # 绘制凸包
-        cv2.polylines(self.cv_dealtImage, [hull_coord], True, (0, 255, 0), 2)
-
-        # 显示相关数据
-        text = "凸包的坐标:\n" + str(hull_coord) + "\n凸包的索引:\n" + str(hull_index)
-        self.ui.label_result.setText(text)
-
-        # 显示轮廓图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
+            # 计算凸包，返回值是一个numpy.ndarray对象，包含了凸包的关键点
+            # returnPoints为True（默认值）时，返回的hull中包含的是凸包关键点的坐标
+            hull_coord = cv2.convexHull(self.contours[0])
+            # returnPoints为False时，返回的是凸包关键点在轮廓中的索引。
+            hull_index = cv2.convexHull(self.contours[0], returnPoints=False)
+            # 绘制凸包
+            cv2.polylines(self.cv_dealtImage, [hull_coord], True, (0, 255, 0), 2)
+            # 显示相关数据
+            text = "凸包的坐标:\n" + str(hull_coord) + "\n凸包的索引:\n" + str(hull_index)
+            self.ui.label_result.setText(text)
+            # 显示轮廓图像
+            self.show_in_dealt_label()
 
     # 绘制直边界矩形
     def draw_bounding_rect(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
-
-        # 计算直边界矩形
-        ret = cv2.boundingRect(self.contours[0])
-
-        text = "直边界矩形四元组\n(矩形左上角x坐标,矩形左上角y坐标,矩形的宽度,矩形的高度)\n" + str(ret)
-        self.ui.label_result.setText(text)
-
-        pt1 = (ret[0], ret[1])
-        pt2 = (ret[0] + ret[2], ret[1] + ret[3])
-        # 绘制直边界矩形
-        cv2.rectangle(self.cv_dealtImage, pt1, pt2, (0, 255, 0), 2)
-
-        # 显示结果图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
+            # 计算直边界矩形
+            ret = cv2.boundingRect(self.contours[0])
+            text = "直边界矩形四元组\n(矩形左上角x坐标,矩形左上角y坐标,矩形的宽度,矩形的高度)\n" + str(ret)
+            self.ui.label_result.setText(text)
+            pt1 = (ret[0], ret[1])
+            pt2 = (ret[0] + ret[2], ret[1] + ret[3])
+            # 绘制直边界矩形
+            cv2.rectangle(self.cv_dealtImage, pt1, pt2, (0, 255, 0), 2)
+            # 显示结果图像
+            self.show_in_dealt_label()
 
     # 绘制旋转矩形：可容纳轮廓的面积最小的矩形
     def draw_min_area_rect(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
-
-        # 计算最小矩形
-        # ret为返回的旋转矩形，它是一个三元组，其格式为
-        # ((矩形中心点x坐标, 矩形中心点y坐标), (矩形的宽度, 矩形的高度),矩形的旋转角度)。
-        ret = cv2.minAreaRect(self.contours[0])
-
-        text = "(矩形中心点x坐标, 矩形中心点y坐标), (矩形的宽度, 矩形的高度),矩形的旋转角度)\n" + str(ret)
-        self.ui.label_result.setText(text)
-
-        # 计算矩形顶点
-        rect = cv2.boxPoints(ret)
-        # 转换为整数
-        rect = np.int0(rect)
-        # 绘制旋转矩形
-        cv2.drawContours(self.cv_dealtImage, [rect], 0, (0, 255, 0), 2)
-
-        # 显示结果图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
+            # 计算最小矩形
+            # ret为返回的旋转矩形，它是一个三元组，其格式为
+            # ((矩形中心点x坐标, 矩形中心点y坐标), (矩形的宽度, 矩形的高度),矩形的旋转角度)。
+            ret = cv2.minAreaRect(self.contours[0])
+            text = "(矩形中心点x坐标, 矩形中心点y坐标), (矩形的宽度, 矩形的高度),矩形的旋转角度)\n" + str(ret)
+            self.ui.label_result.setText(text)
+            # 计算矩形顶点
+            rect = cv2.boxPoints(ret)
+            # 转换为整数
+            rect = np.int0(rect)
+            # 绘制旋转矩形
+            cv2.drawContours(self.cv_dealtImage, [rect], 0, (0, 255, 0), 2)
+            # 显示结果图像
+            self.show_in_dealt_label()
 
     # 绘制最小外包圆
     def draw_min_enclosing_circle(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
-
-        # 计算最小外包圆
-        (x, y), radius = cv2.minEnclosingCircle(self.contours[0])
-        # 圆心坐标
-        center = (int(x), int(y))
-        # 圆的半径
-        radius = int(radius)
-        # 绘制最小外包圆
-        cv2.circle(self.cv_dealtImage, center, radius, (0, 255, 0), 2)
-
-        text = "圆心坐标：" + str(center) + "\n圆的半径：" + str(radius)
-        self.ui.label_result.setText(text)
-        # 显示结果图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
+            # 计算最小外包圆
+            (x, y), radius = cv2.minEnclosingCircle(self.contours[0])
+            # 圆心坐标
+            center = (int(x), int(y))
+            # 圆的半径
+            radius = int(radius)
+            # 绘制最小外包圆
+            cv2.circle(self.cv_dealtImage, center, radius, (0, 255, 0), 2)
+            text = "圆心坐标：" + str(center) + "\n圆的半径：" + str(radius)
+            self.ui.label_result.setText(text)
+            # 显示结果图像
+            self.show_in_dealt_label()
 
     # 绘制拟合椭圆
     def draw_fit_ellipse(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
 
-        # 计算拟合椭圆
-        ellipse = cv2.fitEllipse(self.contours[0])
-        # 绘制拟合椭圆
-        cv2.ellipse(self.cv_dealtImage, ellipse, (0, 255, 0), 2)
-        # 显示结果图像
-        self.show_in_dealt_label()
+            # 计算拟合椭圆
+            ellipse = cv2.fitEllipse(self.contours[0])
+            # 绘制拟合椭圆
+            cv2.ellipse(self.cv_dealtImage, ellipse, (0, 255, 0), 2)
+            # 显示结果图像
+            self.show_in_dealt_label()
 
     # 绘制拟合直线
     def draw_fit_line(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
-
-        rows, cols = self.cv_srcImage.shape[:2]
-        # 计算拟合直线
-        [vx, vy, x, y] = cv2.fitLine(self.contours[0], cv2.DIST_L2, 0, 0.01, 0.01)
-
-        lefty = int((-x * vy / vx) + y)
-        righty = int(((cols - x) * vy / vx) + y)
-        # 绘制拟合直线
-        cv2.line(self.cv_dealtImage, (cols - 1, righty), (0, lefty), (0, 255, 0), 2)
-        # 显示结果图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
+            rows, cols = self.cv_srcImage.shape[:2]
+            # 计算拟合直线
+            [vx, vy, x, y] = cv2.fitLine(self.contours[0], cv2.DIST_L2, 0, 0.01, 0.01)
+            lefty = int((-x * vy / vx) + y)
+            righty = int(((cols - x) * vy / vx) + y)
+            # 绘制拟合直线
+            cv2.line(self.cv_dealtImage, (cols - 1, righty), (0, lefty), (0, 255, 0), 2)
+            # 显示结果图像
+            self.show_in_dealt_label()
 
     # 绘制最小外包三角形
     def draw_min_enclosing_triangle(self):
-        # 先调用绘制轮廓函数
-        self.draw_contour()
-
-        # 计算最小外包三角形
-        # retval为最小外包三角形的面积，triangle为最小外包三角形
-        retval, triangle = cv2.minEnclosingTriangle(self.contours[0])
-        triangle = np.int0(triangle)
-
-        # 绘制最小外包三角形
-        cv2.polylines(self.cv_dealtImage, [triangle], True, (0, 255, 0), 2)
-
-        text = "最小外包三角形面积：\n" + str(retval)
-        self.ui.label_result.setText(text)
-
-        # 显示结果图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 先调用绘制轮廓函数
+            self.draw_contour()
+            # 计算最小外包三角形
+            # retval为最小外包三角形的面积，triangle为最小外包三角形
+            retval, triangle = cv2.minEnclosingTriangle(self.contours[0])
+            triangle = np.int0(triangle)
+            # 绘制最小外包三角形
+            cv2.polylines(self.cv_dealtImage, [triangle], True, (0, 255, 0), 2)
+            text = "最小外包三角形面积：\n" + str(retval)
+            self.ui.label_result.setText(text)
+            # 显示结果图像
+            self.show_in_dealt_label()

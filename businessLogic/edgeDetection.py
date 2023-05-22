@@ -108,7 +108,7 @@ class SubWindow(QMainWindow):
         elif len(self.cv_dealtImage.shape) == 2:
             hight, width = self.cv_dealtImage.shape
             # 单通道类型的图
-            q_image = QImage(self.cv_dealtImage.data, width, hight, QImage.Format_Grayscale8)
+            q_image = QImage(self.cv_dealtImage.data, width, hight, width, QImage.Format_Grayscale8)
 
         # 将图片显示在label_dealt_img上面
         self.dst_img = q_image
@@ -116,33 +116,43 @@ class SubWindow(QMainWindow):
 
     # laplacian边缘检测处理函数
     def laplacican_detection(self):
-        # laplacian边缘检测
-        self.cv_dealtImage = cv2.Laplacian(self.cv_srcImage, cv2.CV_8U)
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # laplacian边缘检测
+            self.cv_dealtImage = cv2.Laplacian(self.cv_srcImage, cv2.CV_8U)
 
-        # 检测后图片显示
-        self.show_in_dealt_label()
+            # 检测后图片显示
+            self.show_in_dealt_label()
 
     # Sobel边缘检测处理函数
     def sobel_detection(self):
-        # sobel边缘检测，
-        self.cv_dealtImage = cv2.Sobel(self.cv_srcImage, cv2.CV_8U, 0, 1)
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # sobel边缘检测，
+            self.cv_dealtImage = cv2.Sobel(self.cv_srcImage, cv2.CV_8U, 0, 1)
 
-        # 检测后图片显示
-        self.show_in_dealt_label()
+            # 检测后图片显示
+            self.show_in_dealt_label()
 
     # Canny边缘检测处理函数
     def canny_detection(self):
-        # 图像灰度化
-        gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY)
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 图像灰度化
+            gray = cv2.cvtColor(self.cv_srcImage, cv2.COLOR_BGR2GRAY)
 
-        # canny边缘检测，参数1：cv读取后的图像，参数2：第一阈值，参数3：第二阈值
-        self.cv_dealtImage = cv2.Canny(gray, 100, 300)
+            # canny边缘检测，参数1：cv读取后的图像，参数2：第一阈值，参数3：第二阈值
+            self.cv_dealtImage = cv2.Canny(gray, 100, 300)
+            # 检测后图片显示
+            self.show_in_dealt_label()
 
-        # 图片转换成QImage类型
-        hight, width = self.cv_dealtImage.shape[0], self.cv_dealtImage.shape[1]  # 尺寸大小
-        # 转换成QImage
-        q_image = QImage(self.cv_dealtImage.data, width, hight, width, QImage.Format_Grayscale8)
 
-        # 将图片显示在label_dealt_img上面
-        self.dst_img = q_image
-        self.ui.label_dealt_img.setPixmap(QPixmap.fromImage(self.dst_img))

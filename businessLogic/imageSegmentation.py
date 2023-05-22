@@ -257,69 +257,84 @@ class SubWindow(QMainWindow):
 
     # 图像融合
     def image_fusion(self):
-        # 复制两张图像
-        img_left = self.cv_srcImage.copy()
-        img_right = self.cv_midImage.copy()
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_midImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 复制两张图像
+            img_left = self.cv_srcImage.copy()
+            img_right = self.cv_midImage.copy()
 
-        # 生成图像1的高斯金字塔，向下采样6次
-        img = img_left.copy()
-        img_left_gaus = [img]
-        for i in range(6):
-            img = cv2.pyrDown(img)
-            img_left_gaus.append(img)
-        # 生成图像2的高斯金字塔，向下采样6次
-        img = img_right.copy()
-        img_right_gaus = [img]
-        for i in range(6):
-            img = cv2.pyrDown(img)
-            img_right_gaus.append(img)
-        # 生成图像1的拉普拉斯金字塔，6层
-        img_left_laps = [img_left_gaus[5]]
-        for i in range(5, 0, -1):
-            img = cv2.pyrUp(img_left_gaus[i])
-            lap = cv2.subtract(img_left_gaus[i - 1], img)  # 两个图像大小不同时，做减法会出错
-            img_left_laps.append(lap)
-        # 生成图像2的拉普拉斯金字塔，6层
-        img_right_laps = [img_right_gaus[5]]
-        for i in range(5, 0, -1):
-            img = cv2.pyrUp(img_right_gaus[i])
-            lap = cv2.subtract(img_right_gaus[i - 1], img)
-            img_right_laps.append(lap)
-        # 拉普拉斯金字塔拼接：图像1每层左半部分与和图像2每层右半部分拼接
-        cols = None
-        img_laps = []
-        for la, lb in zip(img_left_laps, img_right_laps):
-            rows, cols, dpt = la.shape
-            ls = la.copy()
-            ls[:, int(cols / 2):] = lb[:, int(cols / 2):]
-            img_laps.append(ls)
-        # 从拉普拉斯金字塔恢复图像
-        img = img_laps[0]
-        for i in range(1, 6):
-            img = cv2.pyrUp(img)
-            img = cv2.add(img, img_laps[i])
+            # 生成图像1的高斯金字塔，向下采样6次
+            img = img_left.copy()
+            img_left_gaus = [img]
+            for i in range(6):
+                img = cv2.pyrDown(img)
+                img_left_gaus.append(img)
+            # 生成图像2的高斯金字塔，向下采样6次
+            img = img_right.copy()
+            img_right_gaus = [img]
+            for i in range(6):
+                img = cv2.pyrDown(img)
+                img_right_gaus.append(img)
+            # 生成图像1的拉普拉斯金字塔，6层
+            img_left_laps = [img_left_gaus[5]]
+            for i in range(5, 0, -1):
+                img = cv2.pyrUp(img_left_gaus[i])
+                lap = cv2.subtract(img_left_gaus[i - 1], img)  # 两个图像大小不同时，做减法会出错
+                img_left_laps.append(lap)
+            # 生成图像2的拉普拉斯金字塔，6层
+            img_right_laps = [img_right_gaus[5]]
+            for i in range(5, 0, -1):
+                img = cv2.pyrUp(img_right_gaus[i])
+                lap = cv2.subtract(img_right_gaus[i - 1], img)
+                img_right_laps.append(lap)
+            # 拉普拉斯金字塔拼接：图像1每层左半部分与和图像2每层右半部分拼接
+            cols = None
+            img_laps = []
+            for la, lb in zip(img_left_laps, img_right_laps):
+                rows, cols, dpt = la.shape
+                ls = la.copy()
+                ls[:, int(cols / 2):] = lb[:, int(cols / 2):]
+                img_laps.append(ls)
+            # 从拉普拉斯金字塔恢复图像
+            img = img_laps[0]
+            for i in range(1, 6):
+                img = cv2.pyrUp(img)
+                img = cv2.add(img, img_laps[i])
 
-        # 图像1原图像的半部分与和图像2原图像的右左半部分直接拼接
-        direct = img_left.copy()
-        direct[:, int(cols / 2):] = img_right[:, int(cols / 2):]
+            # 图像1原图像的半部分与和图像2原图像的右左半部分直接拼接
+            direct = img_left.copy()
+            direct[:, int(cols / 2):] = img_right[:, int(cols / 2):]
 
-        self.normal_fusion = direct
-        self.pyramid_fusion = img
+            self.normal_fusion = direct
+            self.pyramid_fusion = img
 
     # 普通融合
     def image_fusion_normal(self):
-        # 执行融合
-        self.image_fusion()
-        # 赋值
-        self.cv_dealtImage = self.normal_fusion
-        # 显示图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_midImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 执行融合
+            self.image_fusion()
+            # 赋值
+            self.cv_dealtImage = self.normal_fusion
+            # 显示图像
+            self.show_in_dealt_label()
 
     # 金字塔融合
     def image_fusion_pyramid(self):
-        # 执行融合
-        self.image_fusion()
-        # 赋值
-        self.cv_dealtImage = self.pyramid_fusion
-        # 显示图像
-        self.show_in_dealt_label()
+        # 判断是否有图像
+        if self.cv_srcImage is None or self.cv_midImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 执行融合
+            self.image_fusion()
+            # 赋值
+            self.cv_dealtImage = self.pyramid_fusion
+            # 显示图像
+            self.show_in_dealt_label()

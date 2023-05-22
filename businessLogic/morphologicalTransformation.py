@@ -146,114 +146,149 @@ class SubWindow(QMainWindow):
 
     # 腐蚀操作并将操作后的图片显示
     def erode_image(self):
-        # 从滑动组件获取核心大小
-        value = self.ui.horizontalSlider_base.value()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 从滑动组件获取核心大小
+            value = self.ui.horizontalSlider_base.value()
 
-        # 定义核心
-        kernel = np.ones((value, value), np.uint8)
+            # 定义核心
+            kernel = np.ones((value, value), np.uint8)
 
-        # 腐蚀操作，迭代5次，参数1：cv读取后的二值化图像，参数二：内核数，参数3：迭代次数
-        self.cv_dealtImage = cv2.erode(self.cv_srcImage, kernel, iterations=5)
+            # 腐蚀操作，迭代5次，参数1：cv读取后的二值化图像，参数二：内核数，参数3：迭代次数
+            self.cv_dealtImage = cv2.erode(self.cv_srcImage, kernel, iterations=5)
 
-        # 显示处理后图像
-        self.show_in_dealt_label()
+            # 显示处理后图像
+            self.show_in_dealt_label()
 
     # 膨胀操作并将操作后的图片显示
     def dilate_image(self):
-        # 从滑动组件获取核心大小
-        value = self.ui.horizontalSlider_base.value()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 从滑动组件获取核心大小
+            value = self.ui.horizontalSlider_base.value()
 
-        # 定义核心
-        kernel = np.ones((value, value), np.uint8)
+            # 定义核心
+            kernel = np.ones((value, value), np.uint8)
 
-        # 腐蚀操作，迭代5次，参数1：cv读取后的二值化图像，参数2：内核数，参数3：迭代次数
-        self.cv_dealtImage = cv2.dilate(self.cv_srcImage, kernel, iterations=5)
+            # 腐蚀操作，迭代5次，参数1：cv读取后的二值化图像，参数2：内核数，参数3：迭代次数
+            self.cv_dealtImage = cv2.dilate(self.cv_srcImage, kernel, iterations=5)
 
-        # 显示处理后图像
-        self.show_in_dealt_label()
+            # 显示处理后图像
+            self.show_in_dealt_label()
 
     # 开运算操作并将操作后的图片显示
     def opening_operation_image(self):
-        # 从滑动组件获取核心大小
-        value = self.ui.horizontalSlider_high.value()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 从滑动组件获取核心大小
+            value = self.ui.horizontalSlider_high.value()
 
-        # 定义核心
-        kernel = np.ones((value, value), np.uint8)
+            # 定义核心
+            kernel = np.ones((value, value), np.uint8)
 
-        # 设置形态操作类型，表示操作类型为开运算
-        operation = cv2.MORPH_OPEN
+            # 设置形态操作类型，表示操作类型为开运算
+            operation = cv2.MORPH_OPEN
 
-        # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
-        self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=5)
+            # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
+            self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=5)
 
-        # 显示处理后图像
-        self.show_in_dealt_label()
+            # 显示处理后图像
+            self.show_in_dealt_label()
 
     # 闭运算操作并将操作后的图片显示
     def closing_operation_image(self):
-        # 从滑动组件获取核心大小
-        value = self.ui.horizontalSlider_high.value()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 从滑动组件获取核心大小
+            value = self.ui.horizontalSlider_high.value()
 
-        # 定义核心
-        kernel = np.ones((value, value), np.uint8)
+            # 定义核心
+            kernel = np.ones((value, value), np.uint8)
 
-        # 设置形态操作类型，表示操作类型为闭运算
-        operation = cv2.MORPH_CLOSE
+            # 设置形态操作类型，表示操作类型为闭运算
+            operation = cv2.MORPH_CLOSE
 
-        # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
-        self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=5)
+            # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
+            self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=5)
 
-        # 显示处理后图像
-        self.show_in_dealt_label()
+            # 显示处理后图像
+            self.show_in_dealt_label()
 
     # 梯度运算操作并将操作后的图片显示
     def gradient_operation_image(self):
-        # 从滑动组件获取核心大小
-        value = self.ui.horizontalSlider_high.value()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 从滑动组件获取核心大小
+            value = self.ui.horizontalSlider_high.value()
 
-        # 定义核心
-        kernel = np.ones((value, value), np.uint8)
+            # 定义核心
+            kernel = np.ones((value, value), np.uint8)
 
-        # 设置形态操作类型，表示操作类型为梯度运算
-        operation = cv2.MORPH_GRADIENT
+            # 设置形态操作类型，表示操作类型为梯度运算
+            operation = cv2.MORPH_GRADIENT
 
-        # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
-        self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=1)
+            # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
+            self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=1)
 
-        # 显示处理后图像
-        self.show_in_dealt_label()
+            # 显示处理后图像
+            self.show_in_dealt_label()
 
     # 黑帽运算操作并将操作后的图片显示
     def black_hat_operation_image(self):
-        # 从滑动组件获取核心大小
-        value = self.ui.horizontalSlider_high.value()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 从滑动组件获取核心大小
+            value = self.ui.horizontalSlider_high.value()
 
-        # 定义核心
-        kernel = np.ones((value, value), np.uint8)
+            # 定义核心
+            kernel = np.ones((value, value), np.uint8)
 
-        # 设置形态操作类型，表示操作类型为黑帽运算
-        operation = cv2.MORPH_BLACKHAT
+            # 设置形态操作类型，表示操作类型为黑帽运算
+            operation = cv2.MORPH_BLACKHAT
 
-        # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
-        self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=5)
+            # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
+            self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=5)
 
-        # 显示处理后图像
-        self.show_in_dealt_label()
+            # 显示处理后图像
+            self.show_in_dealt_label()
 
     # 礼帽运算操作并将操作后的图片显示
     def top_hat_operation_image(self):
-        # 从滑动组件获取核心大小
-        value = self.ui.horizontalSlider_high.value()
+        # 判断是否有图像
+        if self.cv_srcImage is None:
+            # 消息弹出无图像
+            QMessageBox.information(self, "提示", "未选择图像，请先选择图像!", QMessageBox.Close)
+        else:
+            # 从滑动组件获取核心大小
+            value = self.ui.horizontalSlider_high.value()
 
-        # 定义核心
-        kernel = np.ones((value, value), np.uint8)
+            # 定义核心
+            kernel = np.ones((value, value), np.uint8)
 
-        # 设置形态操作类型，表示操作类型为礼帽运算
-        operation = cv2.MORPH_TOPHAT
+            # 设置形态操作类型，表示操作类型为礼帽运算
+            operation = cv2.MORPH_TOPHAT
 
-        # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
-        self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=5)
+            # 形态操作，参数1：cv读取后的二值化图像，参数2：形态操作类型，参数3：内核大小，参数4：迭代次数
+            self.cv_dealtImage = cv2.morphologyEx(self.cv_srcImage, operation, kernel, iterations=5)
 
-        # 显示处理后图像
-        self.show_in_dealt_label()
+            # 显示处理后图像
+            self.show_in_dealt_label()
 
